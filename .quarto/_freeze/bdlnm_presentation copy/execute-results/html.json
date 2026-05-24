@@ -1,0 +1,19 @@
+{
+  "hash": "b3a57bf684e42d44dee92a1ed25dd44b",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"A Bayesian framework for distributed lag non-linear models: the {bdlnm} R package\"\nauthor: \n - name: \"**Pau<br>Satorra**\"\n   affiliations: \n    - name: \"Biostatistics Support and Research Unit, IGTP\" \n - name: \"**Marcos Quijal-Zamorano**\"\n   affiliations: \n    - name: \"Institute of Social and Preventive Medicine (ISPM), University of Bern\" \n - name: \"**Joan Ballester**\"\n   affiliations: \n    - name: \"Institut de Salut Global de Barcelona (ISGlobal)\" \n - name: \"**Miguel Ángel Martínez-Beneito**\"\n   affiliations: \n    - name: \"Departament d'Estadística i Investigació Operativa, Universitat de València\"\n - name: \"**Marc Marí-Dell'Olmo**\"\n   affiliations: \n    - name: \"Agència de Salut Pública de Barcelona (ASPB)\"\ndate: \"2026-05-26\"\ndate-format: long\nbibliography: references.bib\nformat: \n  revealjs:\n    smaller: true\n    slide-number: true\n    controls: true\n    progress: true\n    theme: [default, WWW/bdlnm-theme.scss]\n---\n\n\n\n\n::: {.cell}\n\n:::\n\n\n\n::: {.cell}\n\n:::\n\n\n\n::: {.cell}\n\n:::\n\n\n\n::: {.cell}\n\n:::\n\n\n\n::: {.cell}\n\n:::\n\n\n\n::: {.cell}\n\n:::\n\n\n\n::: {.cell}\n\n:::\n\n\n## Exposure-lag-response surface\n\n```{=html}\n<iframe \n  src=\"www/exposure_lag_surface.html\"\n  width=\"100%\"\n  height=\"650\"\n  style=\"border: none;\">\n</iframe>\n```\n\n## References",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {
+      "include-after-body": [
+        "\n<script>\n  // htmlwidgets need to know to resize themselves when slides are shown/hidden.\n  // Fire the \"slideenter\" event (handled by htmlwidgets.js) when the current\n  // slide changes (different for each slide format).\n  (function () {\n    // dispatch for htmlwidgets\n    function fireSlideEnter() {\n      const event = window.document.createEvent(\"Event\");\n      event.initEvent(\"slideenter\", true, true);\n      window.document.dispatchEvent(event);\n    }\n\n    function fireSlideChanged(previousSlide, currentSlide) {\n      fireSlideEnter();\n\n      // dispatch for shiny\n      if (window.jQuery) {\n        if (previousSlide) {\n          window.jQuery(previousSlide).trigger(\"hidden\");\n        }\n        if (currentSlide) {\n          window.jQuery(currentSlide).trigger(\"shown\");\n        }\n      }\n    }\n\n    // hookup for slidy\n    if (window.w3c_slidy) {\n      window.w3c_slidy.add_observer(function (slide_num) {\n        // slide_num starts at position 1\n        fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);\n      });\n    }\n\n  })();\n</script>\n\n"
+      ]
+    },
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

@@ -1,0 +1,287 @@
+/*-- scss:defaults --*/
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+$body-bg:    #ffffff;
+$body-color: #2b2b2b;
+$link-color: #1a7a6e;
+
+$font-family-sans-serif:  'IBM Plex Sans', sans-serif;
+$font-family-monospace:   'IBM Plex Mono', monospace;
+$presentation-heading-font: 'Source Serif 4', serif;
+
+$presentation-font-size-root:  35px;
+$presentation-h1-font-size:    2.2em;
+$presentation-h2-font-size:    1.35em;
+$presentation-heading-color:   #1e1e1e;
+$presentation-heading-text-transform: none;
+
+$accent:  #1a7a6e;   /* teal green — main accent  */
+$accent2: #e8f4f2;   /* teal tint — backgrounds   */
+$muted:   #6b6b6b;
+$orange:  #d97706;   /* warning accent             */
+$orange2: #fef3e2;   /* orange tint                */
+
+/* Quarto callout colour variables — set here so Quarto uses them
+   when generating the callout CSS, avoiding specificity battles   */
+$callout-color-note:    #1a7a6e;
+$callout-color-tip:     #1a7a6e;
+$callout-color-warning: #d97706;
+
+/*-- scss:rules --*/
+
+/* ── Headings ────────────────────────────────────────────── */
+.reveal h1 {
+  color: $accent !important;
+  text-shadow: none;
+  line-height: 1.1;
+  font-weight: 600;
+}
+
+.reveal h2 {
+  color: #1e1e1e !important;
+  border-bottom: 4px solid $accent;
+  padding-bottom: 0.2em;
+  font-weight: 600;
+}
+
+.reveal h3 {
+  color: $muted;
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* ── Title slide ─────────────────────────────────────────── */
+h1.title {
+  font-size: 42px;
+  margin-bottom: 4%;
+  line-height: 1.1;
+}
+
+.reveal .subtitle {
+  color: $muted;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 300;
+  font-size: 0.9em;
+}
+
+/* ── Body ────────────────────────────────────────────────── */
+.reveal p,
+.reveal li {
+  line-height: 1.65;
+  font-weight: 300;
+}
+
+.reveal ul li::marker {
+  color: $accent;
+}
+
+/* ── Plots — centered ────────────────────────────────────── */
+
+/* Container */
+.reveal .cell-output-display {
+  width: 100%;
+  text-align: center !important;
+}
+
+/* The <p> wrapper Quarto generates around <img> */
+.reveal .cell-output-display p {
+  text-align: center !important;
+  width: 100%;
+  margin: 0 auto !important;
+}
+
+/* Static images (ggplot, base R) */
+.reveal .cell-output-display p img,
+.reveal .cell-output-display img {
+  display: inline-block !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+}
+
+/* HTML widgets (plotly, leaflet, etc.) */
+.reveal .cell-output-display .plotly,
+.reveal .cell-output-display .html-widget,
+.reveal .cell-output-display .htmlwidget-container,
+.reveal .cell-output-display .html-widget-static-bound {
+  display: block !important;
+  margin: 0 auto !important;
+  max-width: 100% !important;
+}
+
+/* Plotly: prevent scrollbars in fullscreen by capping height
+   and hiding overflow at every level of the widget DOM        */
+.reveal .cell-output-display .plotly {
+  max-height: 65vh !important;
+  overflow: hidden !important;
+}
+
+.reveal .cell-output-display .plotly .plot-container,
+.reveal .cell-output-display .plotly .svg-container,
+.reveal .cell-output-display .plotly svg {
+  max-width: 100% !important;
+  max-height: 65vh !important;
+  overflow: hidden !important;
+}
+
+/* ── Verbatim output (str(), print(), etc.) ──────────────── */
+/* Scale at container level — same approach as callouts */
+.reveal .cell-output-stdout,
+.reveal .cell-output-stderr {
+  font-size: 0.72em !important;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin-bottom: 2%;
+}
+
+.reveal .cell-output-stdout pre,
+.reveal .cell-output-stderr pre,
+.reveal .cell-output-stdout code,
+.reveal .cell-output-stderr code {
+  font-size: 1em !important;   /* inherit from container — no double scaling */
+}
+
+.reveal pre {
+  background-color: #f6f6f6;
+  border-left: 3px solid $accent;
+  border-radius: 4px;
+  padding: 0.8em 1em;
+  font-size: 0.72em !important;
+  max-height: none !important;
+  overflow: hidden !important;
+}
+
+/* Quarto wraps code in a .sourceCode div — this is where the scrollbar lives */
+.reveal .sourceCode,
+.reveal pre.sourceCode,
+.reveal div.sourceCode {
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;
+}
+
+/* wrap long lines instead of overflowing */
+.reveal pre,
+.reveal pre code,
+.reveal pre.sourceCode,
+.reveal .sourceCode pre {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+}
+
+.reveal pre code,
+.reveal code.sourceCode,
+code.sourceCode {
+  font-size: inherit !important;
+  background-color: transparent;
+  color: inherit;
+}
+
+/* inline code */
+.reveal code,
+.reveal p code {
+  background-color: $accent2;
+  color: darken($accent, 8%);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+  font-size: 0.8em;
+}
+
+
+
+.my_code_class {
+  max-height: 400px;
+  overflow-y: auto !important;
+}
+
+.sourceCode.r {
+  text-wrap: wrap !important;
+}
+
+/* ── Callouts ────────────────────────────────────────────── */
+/* Scale at the callout container level — children inherit, no compounding */
+.reveal .callout {
+  font-size: 0.82em !important;
+  line-height: 1.6;
+}
+
+.reveal .callout-body,
+.reveal .callout-body-container,
+.reveal div.callout-body-container,
+.reveal .callout-body p,
+.reveal .callout-body li,
+.reveal .callout p,
+.reveal .callout li {
+  font-size: 1em !important;  /* inherit from .callout's 0.72em, no further scaling */
+  line-height: 1.6;
+}
+
+/* fallback border overrides (colour variables above are the primary fix) */
+div.callout-note,
+div.callout-tip {
+  border-left-color: $accent !important;
+}
+
+div.callout-warning {
+  border-left-color: $orange !important;
+}
+
+/* ── Tables ──────────────────────────────────────────────── */
+.reveal table th {
+  border-bottom: 2px solid $accent;
+  color: $accent;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  font-size: 0.8em;
+}
+
+.reveal table td {
+  border-bottom: 1px solid #e5e5e5;
+  font-size: 0.85em;
+}
+
+/* vertically stretched table */
+.stretch-table table th,
+.stretch-table table td {
+  padding-top: 0.75em;
+  padding-bottom: 0.75em;
+}
+
+/* ── Progress & slide number ─────────────────────────────── */
+.reveal .progress span {
+  background: $accent;
+}
+
+.reveal .slide-number {
+  color: $muted;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.5em;
+  background: transparent;
+}
+
+/* ── Special slide classes ───────────────────────────────── */
+.thankyou {
+  background-color: $accent2 !important;
+  text-align: center;
+}
+
+.section-slide {
+  background-color: $accent2 !important;
+}
+
+.section-slide h2 {
+  border-bottom: none !important;
+  color: $accent !important;
+  font-size: 1.8em !important;
+}
+
+/* ── Slide background offset ─────────────────────────────── */
+.slide-background-content {
+  margin-top: 2%;
+}
+
+#refs {
+  font-size: 0.9em;
+}
