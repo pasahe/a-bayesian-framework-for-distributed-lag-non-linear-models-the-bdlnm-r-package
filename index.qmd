@@ -235,6 +235,26 @@ Published in CRAN since March 2026:
 : {tbl-colwidths="[28, 36, 36]"}
 :::
 
+## Installation
+
+You can install the latest stable version in CRAN:
+
+```{r echo = TRUE, eval = FALSE}
+install.packages("bdlnm")
+library(bdlnm)
+```
+
+::: {.callout-warning appearance="minimal"}
+At least the stable version of INLA 23.4.24 (or newest) must be installed beforehand. 
+You can install the newest stable INLA version by:
+
+```{r echo = TRUE, eval = FALSE}
+install.packages("INLA", repos=c(getOption("repos"), INLA="https://inla.r-inla-download.org/R/stable"), 
+dep=TRUE)
+```
+
+:::
+
 # Hands-on {bdlnm}: An application
 
 ## Temperature-mortality study
@@ -606,6 +626,10 @@ matRRfit <- cbind(
     lag = as.numeric(gsub("lag", "", lag))
   )
 
+# Position of MMT within the temperature range [0, 1]
+temp_range <- range(cpred$exp_at)
+mid_pos <- (cen - temp_range[1]) / (temp_range[2] - temp_range[1])
+
 temps <- cpred$exp_at
 
 p <- ggplot() +
@@ -622,13 +646,24 @@ p <- ggplot() +
       "#4393c3",
       "#92c5de",
       "#d1e5f0",
-      "#f7f7f7",
+      "#f7f7f7",   # white = MMT
       "#fddbc7",
       "#f4a582",
       "#d6604d",
       "#b2182b"
     ),
-    name = "Temperature"
+    values = c(
+      0,
+      mid_pos * 0.25,
+      mid_pos * 0.50,
+      mid_pos * 0.75,
+      mid_pos,                              # white anchored at MMT
+      mid_pos + (1 - mid_pos) * 0.25,
+      mid_pos + (1 - mid_pos) * 0.50,
+      mid_pos + (1 - mid_pos) * 0.75,
+      1
+    ),
+    name = "Temperature (°C)"
   ) +
   # Start a new color scale for highlighted curves
   ggnewscale::new_scale_color() +
@@ -711,6 +746,10 @@ p_main <- ggplot() +
     plot.margin = margin(8, 8, 0, 8)
   )
 
+# Position of MMT within the temperature range [0, 1]
+temp_range <- range(cpred$exp_at)
+mid_pos <- (cen - temp_range[1]) / (temp_range[2] - temp_range[1])
+
 # Bottom plot: histogram with percentile lines
 p_hist <- ggplot(london, aes(x = tmean)) +
   geom_histogram(
@@ -770,19 +809,28 @@ p_hist <- ggplot(london, aes(x = tmean)) +
   scale_x_continuous(limits = range(cpred$exp_at)) +
   scale_fill_gradientn(
     colours = c(
-      "#053061",
       "#2166ac",
       "#4393c3",
       "#92c5de",
       "#d1e5f0",
-      "#f7f7f7",
+      "#f7f7f7",   # white = MMT
       "#fddbc7",
       "#f4a582",
       "#d6604d",
-      "#b2182b",
-      "#67001f"
+      "#b2182b"
     ),
-    name = "Temperature"
+    values = c(
+      0,
+      mid_pos * 0.25,
+      mid_pos * 0.50,
+      mid_pos * 0.75,
+      mid_pos,                              # white anchored at MMT
+      mid_pos + (1 - mid_pos) * 0.25,
+      mid_pos + (1 - mid_pos) * 0.50,
+      mid_pos + (1 - mid_pos) * 0.75,
+      1
+    ),
+    name = "Temperature (°C)"
   ) +
   labs(x = "Temperature (°C)", y = "Density") +
   theme_minimal() +
@@ -863,6 +911,10 @@ p_main <- ggplot(data = RRfit_overall) +
     plot.margin = margin(8, 8, 0, 8)
   )
 
+# Position of MMT within the temperature range [0, 1]
+temp_range <- range(cpred$exp_at)
+mid_pos <- (cen - temp_range[1]) / (temp_range[2] - temp_range[1])
+
 # Bottom plot: histogram with percentile lines
 p_hist <- ggplot(london, aes(x = tmean)) +
   geom_histogram(
@@ -922,19 +974,28 @@ p_hist <- ggplot(london, aes(x = tmean)) +
   scale_x_continuous(limits = range(cpred$exp_at)) +
   scale_fill_gradientn(
     colours = c(
-      "#053061",
       "#2166ac",
       "#4393c3",
       "#92c5de",
       "#d1e5f0",
-      "#f7f7f7",
+      "#f7f7f7",   # white = MMT
       "#fddbc7",
       "#f4a582",
       "#d6604d",
-      "#b2182b",
-      "#67001f"
+      "#b2182b"
     ),
-    name = "Temperature"
+    values = c(
+      0,
+      mid_pos * 0.25,
+      mid_pos * 0.50,
+      mid_pos * 0.75,
+      mid_pos,                              # white anchored at MMT
+      mid_pos + (1 - mid_pos) * 0.25,
+      mid_pos + (1 - mid_pos) * 0.50,
+      mid_pos + (1 - mid_pos) * 0.75,
+      1
+    ),
+    name = "Temperature (°C)"
   ) +
   labs(x = "Temperature (°C)", y = "Density") +
   theme_minimal() +
@@ -1004,19 +1065,9 @@ Time series of daily attributable fractions (AFs), together with the temperature
 ```{r echo = FALSE, fig.align = "center"}
 col_af <- "black"
 
-temp_colours <- c(
-  "#053061",
-  "#2166ac",
-  "#4393c3",
-  "#92c5de",
-  "#d1e5f0",
-  "#f7f7f7",
-  "#fddbc7",
-  "#f4a582",
-  "#d6604d",
-  "#b2182b",
-  "#67001f"
-)
+# Position of MMT within the temperature range [0, 1]
+temp_range <- range(cpred$exp_at)
+mid_pos <- (cen - temp_range[1]) / (temp_range[2] - temp_range[1])
 
 af_med <- attr$af.summary[, "0.5quant"]
 
@@ -1044,7 +1095,28 @@ ggplot(df, aes(x = x)) +
     )
   ) +
   scale_fill_gradientn(
-    colours = temp_colours,
+    colours = c(
+      "#2166ac",
+      "#4393c3",
+      "#92c5de",
+      "#d1e5f0",
+      "#f7f7f7",   # white = MMT
+      "#fddbc7",
+      "#f4a582",
+      "#d6604d",
+      "#b2182b"
+    ),
+    values = c(
+      0,
+      mid_pos * 0.25,
+      mid_pos * 0.50,
+      mid_pos * 0.75,
+      mid_pos,                              # white anchored at MMT
+      mid_pos + (1 - mid_pos) * 0.25,
+      mid_pos + (1 - mid_pos) * 0.50,
+      mid_pos + (1 - mid_pos) * 0.75,
+      1
+    ),
     name = "Temperature (°C)"
   ) +
   # AF line on top
@@ -1115,21 +1187,21 @@ rbind(
 
 - The {bdlnm} package provides a complete and accessible implementation of Bayesian Distributed Lag Non-Linear Models in R
 
-- It provides a full DLNM workflow in just a few steps: model fitting, prediction, and attribution
-
 - Combining the flexibility of DLNMs with full Bayesian inference enables researchers to fit more realistic and complex models while fully propagating uncertainty
 
 - The posterior distribution of all estimates allows direct uncertainty quantification of derived measures (e.g., MMT, attributable fractions, attributable numbers) without additional approximations
+
+- It constitutes a valuable tool for studying the health impacts of climate change and other environmental risks in increasingly data-rich settings
 
 - The framework extends beyond environmental epidemiology to any setting with time-varying exposures and delayed effects making it a general tool for time series analysis
 
 ## Present and future work
 
-**Currently in development**
+**Currently in development:**
 
 - `mcmc_to_bdlnm()`: convert any object with posterior samples of DLNM coefficients from an MCMC algorithm (e.g. NIMBLE, Stan) into a `bdlnm` object, enabling broader model compatibility beyond INLA
 
-**Coming soon**
+**Coming soon:**
 
 - **Multi-location analysis:** pool independent exposure-lag-response curves across cities or regions within a single model
 
@@ -1137,18 +1209,24 @@ rbind(
 
 - **Parallelization:** faster inference via {futurize} for large datasets
 
-::: {.callout-note appearance="minimal"}
-Contributions and feature requests are welcome via the GitHub repository at **github.com/pasahe/bdlnm**
-:::
-
 ## Further resources
 
 ```{=html}
+<br><br>
 <div style="display: grid; grid-template-rows: auto auto; gap: 1.2rem; padding: 0.5rem 0;">
 
   <!-- Row 1: two cards side by side -->
   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
 
+<a href="https://github.com/pasahe/bdlnm" target="_blank"
+       style="text-decoration: none; border: 0.5px solid #ccc; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; color: inherit;">
+      <img src="https://image.thum.io/get/width/600/https://github.com/pasahe/bdlnm"
+           style="width: 100%; height: 160px; object-fit: cover;" alt="GitHub repository"/>
+      <div style="padding: 0.6rem 0.8rem; font-size: 0.8em; line-height: 1.4;">
+        🐛 Bug reports and contributions welcome via the GitHub repository<br>
+        <span style="font-size: 0.85em; color: #0077cc;">https://github.com/pasahe/bdlnm</span>
+      </div>
+    </a>
     <a href="https://pasahe.github.io/bdlnm/" target="_blank"
        style="text-decoration: none; border: 0.5px solid #ccc; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; color: inherit;">
       <img src="https://image.thum.io/get/width/600/https://pasahe.github.io/bdlnm/"
@@ -1156,31 +1234,6 @@ Contributions and feature requests are welcome via the GitHub repository at **gi
       <div style="padding: 0.6rem 0.8rem; font-size: 0.8em; line-height: 1.4;">
         📦 Full documented vignettes available on the package webpage<br>
         <span style="font-size: 0.85em; color: #0077cc;">https://pasahe.github.io/bdlnm/</span>
-      </div>
-    </a>
-
-    <a href="https://www.r-bloggers.com/2026/04/new-r-package-bdlnm-released-on-cran-bayesian-distributed-lag-non-linear-models-in-r-via-inla/"
-       target="_blank"
-       style="text-decoration: none; border: 0.5px solid #ccc; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; color: inherit;">
-      <img src="https://image.thum.io/get/width/600/https://www.r-bloggers.com/2026/04/new-r-package-bdlnm-released-on-cran-bayesian-distributed-lag-non-linear-models-in-r-via-inla/"
-           style="width: 100%; height: 160px; object-fit: cover;" alt="R-bloggers post"/>
-      <div style="padding: 0.6rem 0.8rem; font-size: 0.8em; line-height: 1.4;">
-        📊 Learn to build fancy plots combining <code>bdlnm</code> with <code>ggplot2</code> and <code>plotly</code><br>
-        <span style="font-size: 0.75em; color: #0077cc; word-break: break-all;">https://www.r-bloggers.com/2026/04/new-r-package-bdlnm-released-on-cran-bayesian-distributed-lag-non-linear-models-in-r-via-inla/</span>
-      </div>
-    </a>
-
-  </div>
-
-  <!-- Row 2: GitHub card centred -->
-  <div style="display: flex; justify-content: center;">
-    <a href="https://github.com/pasahe/bdlnm" target="_blank"
-       style="text-decoration: none; border: 0.5px solid #ccc; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; color: inherit; width: 50%;">
-      <img src="https://image.thum.io/get/width/600/https://github.com/pasahe/bdlnm"
-           style="width: 100%; height: 160px; object-fit: cover;" alt="GitHub repository"/>
-      <div style="padding: 0.6rem 0.8rem; font-size: 0.8em; line-height: 1.4;">
-        🐛 Bug reports and contributions welcome via the GitHub repository<br>
-        <span style="font-size: 0.85em; color: #0077cc;">https://github.com/pasahe/bdlnm</span>
       </div>
     </a>
   </div>
