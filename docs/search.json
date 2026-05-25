@@ -168,6 +168,13 @@
     "text": "DLNMs: Model formulation\nFor time-series count data (A. Gasparrini, Armstrong, and Kenward 2010):\n\\[Y_t \\sim \\text{Poisson}(\\mu_t)\\] \\[\\log(\\mu_t) = \\alpha + \\underbrace{cb(x_t, \\ldots, x_{t-L}) \\cdot \\beta}_{\\text{cross-basis}} + \\sum_{k} \\gamma_k u_{kt}\\]\n\n\n\n\n\n\n\nTerm\nDescription\n\n\n\n\n\\(cb(\\cdot)\\)\nCross-basis: tensor product of exposure and lag spline bases\n\n\n\\(\\beta\\)\nCoefficients of the cross-basis\n\n\n\\(u_{kt}\\)\n(Time-varying) confounders (e.g. seasonality, trend)\n\n\n\\(\\gamma_k\\)\nCoefficients of the confounders\n\n\n\\(\\alpha\\)\nIntercept\n\n\n\nThe cross-basis encodes the full bivariate exposure-lag-response surface in a single model term"
   },
   {
+    "objectID": "index.html#cross-basis-construction",
+    "href": "index.html#cross-basis-construction",
+    "title": "A Bayesian framework for distributed lag non-linear models: the {bdlnm} R package",
+    "section": "Cross-basis construction",
+    "text": "Cross-basis construction\nThe cross-basis combines the exposure-response basis and the lag-response basis through a tensor product:"
+  },
+  {
     "objectID": "index.html#limitations-of-classical-dlnms",
     "href": "index.html#limitations-of-classical-dlnms",
     "title": "A Bayesian framework for distributed lag non-linear models: the {bdlnm} R package",
@@ -249,7 +256,7 @@
     "href": "index.html#fitting-the-bayesian-dlnm-1",
     "title": "A Bayesian framework for distributed lag non-linear models: the {bdlnm} R package",
     "section": "Fitting the Bayesian DLNM",
-    "text": "Fitting the Bayesian DLNM\nNow we have a matrix with the estimated posterior samples of the model coefficients, together with their summary across samples:\nPosterior samples mod$coefficients\n\n\n                 sample1      sample2      sample3      sample4      sample5\n(Intercept)  5.177133367  5.078826441  5.087690365  5.240474799  5.259952868\ncbv1.l1     -0.139255261 -0.154092904 -0.112435527 -0.110086148 -0.153346245\ncbv1.l2     -0.007789014  0.008053975  0.001242166 -0.003960913  0.006230646\ncbv1.l3     -0.057353780 -0.056028646 -0.045410399 -0.044022672 -0.055960322\ncbv1.l4      0.048901707  0.057240589  0.025426990  0.028533243  0.049957529\n\n\nPosterior summary mod$coefficients.summary\n\n\n                    mean         sd  0.025quant     0.5quant  0.975quant\n(Intercept)  5.204978726 0.10244169  5.00329692  5.205434414  5.39782425\ncbv1.l1     -0.134951887 0.02148864 -0.17689705 -0.134050285 -0.09601900\ncbv1.l2     -0.006088059 0.01031606 -0.02557074 -0.006097467  0.01455306\ncbv1.l3     -0.049713404 0.01141099 -0.07279945 -0.049397667 -0.02790430\ncbv1.l4      0.049565146 0.01806032  0.01484090  0.050350330  0.08412486\n\n\n* Visualizing only the first 5 coefficients and the first 5 posterior samples"
+    "text": "Fitting the Bayesian DLNM\nNow we have a matrix with the estimated posterior samples of the model coefficients, together with their summary across samples:\nPosterior samples mod$coefficients\n\n\n                 sample1      sample2      sample3      sample4      sample5\n(Intercept)  5.177133368  5.078826441  5.087690366  5.240474799  5.259952868\ncbv1.l1     -0.139255261 -0.154092904 -0.112435527 -0.110086148 -0.153346245\ncbv1.l2     -0.007789014  0.008053975  0.001242166 -0.003960913  0.006230646\ncbv1.l3     -0.057353780 -0.056028646 -0.045410399 -0.044022672 -0.055960321\ncbv1.l4      0.048901707  0.057240589  0.025426990  0.028533243  0.049957529\n\n\nPosterior summary mod$coefficients.summary\n\n\n                    mean         sd  0.025quant     0.5quant  0.975quant\n(Intercept)  5.204978726 0.10244169  5.00329692  5.205434414  5.39782425\ncbv1.l1     -0.134951888 0.02148864 -0.17689705 -0.134050285 -0.09601900\ncbv1.l2     -0.006088059 0.01031606 -0.02557074 -0.006097467  0.01455306\ncbv1.l3     -0.049713404 0.01141099 -0.07279945 -0.049397667 -0.02790430\ncbv1.l4      0.049565146 0.01806032  0.01484090  0.050350330  0.08412486\n\n\n* Visualizing only the first 5 coefficients and the first 5 posterior samples"
   },
   {
     "objectID": "index.html#minimum-mortality-temperature-mmt",
@@ -347,7 +354,7 @@
     "href": "index.html#total-attributable-burden",
     "title": "A Bayesian framework for distributed lag non-linear models: the {bdlnm} R package",
     "section": "Total attributable burden",
-    "text": "Total attributable burden\nTotal mortality burden attributable to non-optimal temperatures in the London 75+ population across 2000–2011:\n\n\n\n\n\n\n\n\n\nmean\nsd\n0.025quant\n0.5quant\n0.975quant\nmode\n\n\n\n\nAttributable fraction\n0.174\n0.018\n0.139\n0.175\n0.207\n0.176\n\n\nAttributable number\n68857.597\n7131.526\n55071.066\n69178.391\n81995.459\n69842.155"
+    "text": "Total attributable burden\nTotal mortality burden attributable to non-optimal temperatures in the London 75+ population across 2000–2011:\n\n\n\n\n\n\n\n\n\nmean\nsd\n0.025quant\n0.5quant\n0.975quant\nmode\n\n\n\n\nAttributable fraction\n0.174\n0.018\n0.139\n0.175\n0.207\n0.176\n\n\nAttributable number\n68857.597\n7131.526\n55071.066\n69178.391\n81995.458\n69842.155"
   },
   {
     "objectID": "index.html#conclusions-1",
@@ -378,11 +385,11 @@
     "text": "References\n\n\n\n\nArgentieri, M. Austin, Najaf Amin, Alejo J. Nevado-Holgado, William Sproviero, Jennifer A. Collister, Sarai M. Keestra, Midas M. Kuilman, et al. 2025. “Integrating the Environmental and Genetic Architectures of Aging and Mortality.” Nature Medicine 31: 1016–25. https://doi.org/10.1038/s41591-024-03483-9.\n\n\nGasparrini, A., B. Armstrong, and M. G. Kenward. 2010. “Distributed Lag Non-Linear Models.” Statistics in Medicine 29 (21): 2224–34. https://doi.org/https://doi.org/10.1002/sim.3940.\n\n\nGasparrini, Antonio, Ben Armstrong, and Fabian Scheipl. 2011. “Distributed Lag Linear and Non-Linear Models in R: The Package dlnm.” Journal of Statistical Software 43 (8): 1–20. https://doi.org/10.18637/jss.v043.i08.\n\n\nGasparrini, Antonio, and Michela Leone. 2014. “Attributable Risk from Distributed Lag Models.” BMC Medical Research Methodology 14 (April): 55. https://doi.org/10.1186/1471-2288-14-55.\n\n\nQuijal-Zamorano, Marcos, Miguel A Martinez-Beneito, Joan Ballester, and Marc Marí-Dell’Olmo. 2024. “Spatial Bayesian Distributed Lag Non-Linear Models (SB-DLNM) for Small-Area Exposure-Lag-Response Epidemiological Modelling.” International Journal of Epidemiology 53 (3): dyae061. https://doi.org/10.1093/ije/dyae061.\n\n\nVicedo-Cabrera, Ana M., Francesco Sera, and Antonio Gasparrini. 2019. “A Hands-on Tutorial on a Modeling Framework for Projections of Climate Change Impacts on Health.” Epidemiology 30 (3): 321–29. https://doi.org/10.1097/ede.0000000000000982."
   },
   {
-    "objectID": "Old/bdlnm_presentation copy.html#exposure-response-associations",
-    "href": "Old/bdlnm_presentation copy.html#exposure-response-associations",
+    "objectID": "Old/bdlnm_presentation copy.html#cross-basis-construction",
+    "href": "Old/bdlnm_presentation copy.html#cross-basis-construction",
     "title": "A Bayesian framework for distributed lag non-linear models: the {bdlnm} R package",
-    "section": "Exposure-response associations",
-    "text": "Exposure-response associations\nSlicing at each lag value gives one exposure-response curve per lag:"
+    "section": "Cross-basis construction",
+    "text": "Cross-basis construction\nThe cross-basis combines the exposure-response basis and the lag-response basis through a tensor product:"
   },
   {
     "objectID": "Old/bdlnm_presentation copy.html#references",

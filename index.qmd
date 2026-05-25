@@ -161,6 +161,14 @@ $$\log(\mu_t) = \alpha + \underbrace{cb(x_t, \ldots, x_{t-L}) \cdot \beta}_{\tex
 
 The cross-basis encodes the full bivariate exposure-lag-response surface in a single model term
 
+## Cross-basis construction
+
+The cross-basis combines the **exposure-response basis** and the **lag-response basis** through a tensor product:
+
+<br>
+
+![](www/crossbasis.png){fig-align="center"}
+
 ## Limitations of classical DLNMs
 
 - Datasets are becoming larger and more complex, with studies increasingly featuring granular spatial data across many locations
