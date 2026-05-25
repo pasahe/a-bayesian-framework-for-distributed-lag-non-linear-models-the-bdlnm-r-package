@@ -176,7 +176,7 @@ The cross-basis combines the **exposure-response basis** and the **lag-response 
 - Classical frequentist DLNMs rely on a **two-stage approach**:
 
   1. Independent DLNMs are fitted at each location separately (first stage)
-  2. Location-specific estimates are pooled via multivariate meta-analysis (second stage)
+  2. Location-specific estimates are pooled via multivariable meta-analysis (second stage)
 
 ::: {.callout-warning appearance = "minimal"}
 **Key limitations**
@@ -798,11 +798,11 @@ main = "Lag-response (99th pct temperature)")
 The idea is to compare observed mortality under real temperature conditions against a counterfactual scenario where the population was always exposed to an optimal reference temperature (e.g. the MMT) over the same period
 :::
 
-Therefore if we have estimated $\beta_x$ associated with a certain $x$ exposure in a time $t$ (**centered to an optimal reference one**) we can calculate the attribution to non-optimal temperature exposure as:
+- Therefore, if we have estimated $\beta_x$ associated with a certain $x$ exposure in a time $t$ (**centered to an optimal reference one**) we can calculate the attribution to non-optimal temperature exposure as:
 
 $$\text{AF}_{x,t} = 1 - \exp(-\beta_x) \qquad \text{AN}_{x,t} = n_t \cdot \text{AF}_{x,t}$$
 
-In a DLNM setting, the **overall cumulative effect** $\beta_{x,\,\text{overall}}$ can be used as $\beta_x$ (forward perspective)
+- In a DLNM setting, the **overall cumulative effect** $\beta_{x,\,\text{overall}}$ can be used as $\beta_x$ (forward perspective)
 
 ## Computing attributable burden
 
