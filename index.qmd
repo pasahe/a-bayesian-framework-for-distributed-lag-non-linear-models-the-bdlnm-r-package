@@ -697,150 +697,75 @@ animate(p, nframes = 300, fps = 15, end_pause = 100)
 Slicing at each lag value gives one exposure-response curve per lag:
 
 ```{r echo = FALSE, fig.width = 12, fig.height = 8, fig.align="center"}
-RRfit <- rbind(matRRfit)
-
-RRfit_lags <- RRfit |>
-  filter(lag %in% 0:4) |>
-  mutate(lag = as.factor(lag))
+RRfit_lags <- matRRfit |>
+  mutate(lag = as.numeric(lag))
 
 temps <- cpred$exp_at
 t_cold <- temps[which.min(abs(temps - quantile(temps, 0.01)))]
 t_hot <- temps[which.min(abs(temps - quantile(temps, 0.99)))]
 
-# Top plot: exposure-response curves for each lag and overall
-p_main <- ggplot() +
-  # Background: all lags, fading from vivid (small) to pale (large)
+p <- ggplot() +
   geom_line(
     data = RRfit_lags,
-    aes(x = temperature, y = RR, group = lag, color = lag),
-    linewidth = 0.8
-  ) +
-  scale_color_manual(
-    values = c(
-      "0" = "#1a237e",
-      "1" = "#1565c0", 
-      "2" = "#0288d1",
-      "3" = "#00897b",
-      "4" = "#43a047"
+    aes(
+      x = temperature,
+      y = RR,
+      group = lag,
+      color = lag
     ),
+    linewidth = 0.9
+  ) +
+  scale_color_gradientn(
+    colours = c(
+      "black",
+      "#2b1d2f",
+      "#4a2f5e",
+      "#6a4c93",
+      "#8b6bb8",
+      "#b39cdb",
+      "#d8c9f1",
+      "#f3eef5"
+    ),
+    values = scales::rescale(c(0, 0.5, 1, 2, 3, 4, 5, 10, 20)),
     name = "Lag"
   ) +
   geom_hline(
     yintercept = 1,
-    linetype = "dashed"
+    linetype = "dashed",
+    color = "grey30",
+    linewidth = 0.5
   ) +
   scale_y_continuous(
     transform = "log10",
     breaks = sort(c(0.8, pretty_breaks(5)(c(0.8, 4))))
   ) +
   labs(
-    x = NULL,
+    x = "Temperature (°C)",
     y = "Relative Risk (RR)",
-    color = NULL,
-    fill = NULL
+    title = "Lag: {closest_state} days"
   ) +
   theme_minimal() +
   theme(
     legend.position = "top",
-    axis.text.x = element_blank(),
-    plot.margin = margin(8, 8, 0, 8)
+    plot.margin = margin(8, 8, 8, 8)
+  ) +
+  transition_states(
+    lag,
+    transition_length = 1,
+    state_length = 0
+  ) +
+  shadow_mark(
+    past = TRUE,
+    future = FALSE,
+    alpha = 1
   )
 
-# Position of MMT within the temperature range [0, 1]
-temp_range <- range(cpred$exp_at)
-mid_pos <- (cen - temp_range[1]) / (temp_range[2] - temp_range[1])
-
-# Bottom plot: histogram with percentile lines
-p_hist <- ggplot(london, aes(x = tmean)) +
-  geom_histogram(
-    aes(y = after_stat(density), fill = after_stat(x)),
-    binwidth = 0.5,
-    color = "black",
-    linewidth = 0.2
-  ) +
-  geom_vline(
-    xintercept = t_cold,
-    linetype = "dashed",
-    color = "#053061",
-    linewidth = 0.6
-  ) +
-  geom_vline(
-    xintercept = t_hot,
-    linetype = "dashed",
-    color = "#67001f",
-    linewidth = 0.6
-  ) +
-  geom_vline(
-    xintercept = cen,
-    linetype = "dashed",
-    color = "grey20",
-    linewidth = 0.6
-  ) +
-  annotate(
-    "text",
-    x = t_cold,
-    y = Inf,
-    label = "1st pct",
-    vjust = 1.4,
-    hjust = 1.1,
-    size = 3.2,
-    color = "#053061"
-  ) +
-  annotate(
-    "text",
-    x = t_hot,
-    y = Inf,
-    label = "99th pct",
-    vjust = 1.4,
-    hjust = -0.1,
-    size = 3.2,
-    color = "#67001f"
-  ) +
-  annotate(
-    "text",
-    x = cen,
-    y = Inf,
-    label = "MMT",
-    vjust = 1.4,
-    hjust = -0.1,
-    size = 3.2,
-    color = "grey20"
-  ) +
-  scale_x_continuous(limits = range(cpred$exp_at)) +
-  scale_fill_gradientn(
-    colours = c(
-      "#2166ac",
-      "#4393c3",
-      "#92c5de",
-      "#d1e5f0",
-      "#f7f7f7",   # white = MMT
-      "#fddbc7",
-      "#f4a582",
-      "#d6604d",
-      "#b2182b"
-    ),
-    values = c(
-      0,
-      mid_pos * 0.25,
-      mid_pos * 0.50,
-      mid_pos * 0.75,
-      mid_pos,                              # white anchored at MMT
-      mid_pos + (1 - mid_pos) * 0.25,
-      mid_pos + (1 - mid_pos) * 0.50,
-      mid_pos + (1 - mid_pos) * 0.75,
-      1
-    ),
-    name = "Temperature (°C)"
-  ) +
-  labs(x = "Temperature (°C)", y = "Density") +
-  theme_minimal() +
-  theme(
-    plot.margin = margin(20, 8, 8, 8),
-    legend.position = "bottom"
-  )
-
-# Combine them:
-p_main / p_hist + plot_layout(heights = c(3, 1))
+animate(
+  p,
+  nframes = 500,
+  fps = 15,
+  end_pause = 100
+)
 ```
 
 ## Overall cumulative effect
