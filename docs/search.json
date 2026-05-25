@@ -256,7 +256,7 @@
     "href": "index.html#fitting-the-bayesian-dlnm-1",
     "title": "A Bayesian framework for distributed lag non-linear models: the {bdlnm} R package",
     "section": "Fitting the Bayesian DLNM",
-    "text": "Fitting the Bayesian DLNM\nNow we have a matrix with the estimated posterior samples of the model coefficients, together with their summary across samples:\nPosterior samples mod$coefficients\n\n\n                 sample1      sample2      sample3      sample4      sample5\n(Intercept)  5.177133367  5.078826441  5.087690366  5.240474799  5.259952868\ncbv1.l1     -0.139255261 -0.154092904 -0.112435527 -0.110086149 -0.153346245\ncbv1.l2     -0.007789014  0.008053975  0.001242166 -0.003960913  0.006230646\ncbv1.l3     -0.057353780 -0.056028646 -0.045410399 -0.044022672 -0.055960321\ncbv1.l4      0.048901707  0.057240589  0.025426990  0.028533243  0.049957529\n\n\nPosterior summary mod$coefficients.summary\n\n\n                    mean         sd  0.025quant     0.5quant  0.975quant\n(Intercept)  5.204978726 0.10244169  5.00329692  5.205434414  5.39782425\ncbv1.l1     -0.134951888 0.02148864 -0.17689705 -0.134050285 -0.09601900\ncbv1.l2     -0.006088059 0.01031606 -0.02557074 -0.006097467  0.01455306\ncbv1.l3     -0.049713404 0.01141099 -0.07279945 -0.049397667 -0.02790430\ncbv1.l4      0.049565146 0.01806032  0.01484090  0.050350330  0.08412486\n\n\n* Visualizing only the first 5 coefficients and the first 5 posterior samples"
+    "text": "Fitting the Bayesian DLNM\nNow we have a matrix with the estimated posterior samples of the model coefficients, together with their summary across samples:\nPosterior samples mod$coefficients\n\n\n                 sample1      sample2      sample3      sample4      sample5\n(Intercept)  5.177133367  5.078826441  5.087690366  5.240474799  5.259952868\ncbv1.l1     -0.139255261 -0.154092904 -0.112435527 -0.110086149 -0.153346245\ncbv1.l2     -0.007789014  0.008053975  0.001242166 -0.003960913  0.006230646\ncbv1.l3     -0.057353780 -0.056028646 -0.045410399 -0.044022672 -0.055960321\ncbv1.l4      0.048901707  0.057240589  0.025426990  0.028533243  0.049957529\n\n\nPosterior summary mod$coefficients.summary\n\n\n                    mean         sd  0.025quant     0.5quant  0.975quant\n(Intercept)  5.204978726 0.10244169  5.00329692  5.205434414  5.39782425\ncbv1.l1     -0.134951887 0.02148864 -0.17689705 -0.134050285 -0.09601900\ncbv1.l2     -0.006088059 0.01031606 -0.02557074 -0.006097467  0.01455306\ncbv1.l3     -0.049713404 0.01141099 -0.07279945 -0.049397667 -0.02790430\ncbv1.l4      0.049565146 0.01806032  0.01484090  0.050350330  0.08412486\n\n\n* Visualizing only the first 5 coefficients and the first 5 posterior samples"
   },
   {
     "objectID": "index.html#minimum-mortality-temperature-mmt",
@@ -273,13 +273,6 @@
     "text": "MMT posterior distribution\n\n\n\n\nThe posterior is concentrated around 18.9°C and unimodal: the median is a stable centering value for the relative risk estimates"
   },
   {
-    "objectID": "index.html#mmt-posterior-distribution-1",
-    "href": "index.html#mmt-posterior-distribution-1",
-    "title": "A Bayesian framework for distributed lag non-linear models: the {bdlnm} R package",
-    "section": "MMT posterior distribution",
-    "text": "MMT posterior distribution\nThe built-in plot.optimal_exposure() provides a quick visualisation of the MMT posterior distribution directly from the mmt object:\n\nplot(mmt)"
-  },
-  {
     "objectID": "index.html#predicting-exposure-lag-response-effects",
     "href": "index.html#predicting-exposure-lag-response-effects",
     "title": "A Bayesian framework for distributed lag non-linear models: the {bdlnm} R package",
@@ -291,7 +284,7 @@
     "href": "index.html#predicting-exposure-lag-response-effects-1",
     "title": "A Bayesian framework for distributed lag non-linear models: the {bdlnm} R package",
     "section": "Predicting exposure-lag-response effects",
-    "text": "Predicting exposure-lag-response effects\nNow we have an array of estimated posterior RRs for each temperature–lag combination, together with their summary across samples:\n\n\nPosterior samples matRRfit\n\n\n, , sample1\n\n          lag0     lag1     lag2     lag3\n-3.4 0.8489690 1.078462 1.144318 1.100586\n-3.3 0.8496295 1.077663 1.143098 1.099761\n-3.2 0.8502905 1.076864 1.141878 1.098937\n-3.1 0.8509518 1.076066 1.140661 1.098113\n\n\n *Visualizing only first 4 temperatures and lags and 1 sample \n\nPosterior summary matRRfit.summary\n\n\n, , mean\n\n          lag0     lag1     lag2     lag3\n-3.4 0.8526720 1.071552 1.134935 1.094421\n-3.3 0.8533691 1.070942 1.133927 1.093737\n-3.2 0.8540667 1.070333 1.132921 1.093054\n-3.1 0.8547648 1.069724 1.131916 1.092371\n\n\n *Visualizing only first 4 temperatures and lags and 1 summary statistic"
+    "text": "Predicting exposure-lag-response effects\nNow we have an array of estimated posterior RRs for each temperature–lag combination, together with their summary across samples:\n\n\nPosterior samples cpred$matRRfit\n\n\n, , sample1\n\n          lag0     lag1     lag2     lag3\n-3.4 0.8489690 1.078462 1.144318 1.100586\n-3.3 0.8496295 1.077663 1.143098 1.099761\n-3.2 0.8502905 1.076864 1.141878 1.098937\n-3.1 0.8509518 1.076066 1.140661 1.098113\n\n\n *Visualizing only first 4 temperatures and lags and 1 sample \n\nPosterior summary cpred$matRRfit.summary\n\n\n, , mean\n\n          lag0     lag1     lag2     lag3\n-3.4 0.8526720 1.071552 1.134935 1.094421\n-3.3 0.8533691 1.070942 1.133927 1.093737\n-3.2 0.8540667 1.070333 1.132921 1.093054\n-3.1 0.8547648 1.069724 1.131916 1.092371\n\n\n *Visualizing only first 4 temperatures and lags and 1 summary statistic"
   },
   {
     "objectID": "index.html#exposure-lag-response-surface",
@@ -326,7 +319,7 @@
     "href": "index.html#attributable-burden",
     "title": "A Bayesian framework for distributed lag non-linear models: the {bdlnm} R package",
     "section": "Attributable burden",
-    "text": "Attributable burden\n\nThe attributable() function estimates the mortality burden attributable to non-optimal temperature exposures:\n\nAttributable fraction (AF): proportion of all mortality events attributable to temperature\nAttributable number (AN): absolute number of deaths attributable to temperature\n\n\n\n\n\nThe idea is to compare observed mortality under real temperature conditions against a counterfactual scenario where the population was always exposed to an optimal reference temperature (e.g. the MMT) over the same period\n\n\n\nTherefore if we have estimated \\(\\beta_x\\) associated with a certain \\(x\\) exposoure (compared to a reference one) in a time \\(t\\) we can calculate:\n\\[\\text{AF}_{x,t} = 1 - \\exp(-\\beta_x) \\qquad \\text{AN}_{x,t} = n_t \\cdot \\text{AF}_{x,t}\\]\nIn a DLNM setting, the overall cumulative effect \\(\\beta_{x,\\,\\text{overall}}\\) can be used as \\(\\beta_x\\) (forward perspective)"
+    "text": "Attributable burden\n\nThe attributable() function estimates the mortality burden attributable to non-optimal temperature exposures:\n\nAttributable fraction (AF): proportion of all mortality events attributable to temperature\nAttributable number (AN): absolute number of deaths attributable to temperature\n\n\n\n\n\nThe idea is to compare observed mortality under real temperature conditions against a counterfactual scenario where the population was always exposed to an optimal reference temperature (e.g. the MMT) over the same period\n\n\n\nTherefore if we have estimated \\(\\beta_x\\) associated with a certain \\(x\\) exposure in a time \\(t\\) (centered to an optimal reference one) we can calculate the attribution to non-optimal temperature exposure as:\n\\[\\text{AF}_{x,t} = 1 - \\exp(-\\beta_x) \\qquad \\text{AN}_{x,t} = n_t \\cdot \\text{AF}_{x,t}\\]\nIn a DLNM setting, the overall cumulative effect \\(\\beta_{x,\\,\\text{overall}}\\) can be used as \\(\\beta_x\\) (forward perspective)"
   },
   {
     "objectID": "index.html#computing-attributable-burden",

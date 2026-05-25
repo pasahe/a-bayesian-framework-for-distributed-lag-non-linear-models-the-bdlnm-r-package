@@ -515,14 +515,6 @@ ggplot(as.data.frame(mmt$est), aes(x = mmt$est)) +
 The posterior is concentrated around 18.9°C and unimodal: the median is a stable centering value for the relative risk estimates
 :::
 
-## MMT posterior distribution
-
-The built-in `plot.optimal_exposure()` provides a quick visualisation of the MMT posterior distribution directly from the `mmt` object:
-
-```{r echo = TRUE, fig.align = "center"}
-plot(mmt)
-```
-
 ## Predicting exposure-lag-response effects
 
 From the fitted model, `bcrosspred()` computes the full bivariate exposure-lag-response association. Relative risks must be centered at the MMT:
@@ -543,7 +535,7 @@ Now we have an array of estimated posterior RRs for each temperature–lag combi
 :::: {.columns}
 
 ::: {.column width="50%"}
-**Posterior samples** `matRRfit`
+**Posterior samples** `cpred$matRRfit`
 
 ```{r}
 cpred$matRRfit[1:4, 1:4, 1:1, drop = FALSE]
@@ -554,7 +546,7 @@ cpred$matRRfit[1:4, 1:4, 1:1, drop = FALSE]
 :::
 
 ::: {.column width="50%"}
-**Posterior summary** `matRRfit.summary` 
+**Posterior summary** `cpred$matRRfit.summary` 
 
 ```{r}
 cpred$matRRfit.summary[1:4, 1:4, 1, drop = FALSE]
@@ -806,7 +798,7 @@ main = "Lag-response (99th pct temperature)")
 The idea is to compare observed mortality under real temperature conditions against a counterfactual scenario where the population was always exposed to an optimal reference temperature (e.g. the MMT) over the same period
 :::
 
-Therefore if we have estimated $\beta_x$ associated with a certain $x$ exposoure (compared to a reference one) in a time $t$ we can calculate:
+Therefore if we have estimated $\beta_x$ associated with a certain $x$ exposure in a time $t$ (**centered to an optimal reference one**) we can calculate the attribution to non-optimal temperature exposure as:
 
 $$\text{AF}_{x,t} = 1 - \exp(-\beta_x) \qquad \text{AN}_{x,t} = n_t \cdot \text{AF}_{x,t}$$
 
