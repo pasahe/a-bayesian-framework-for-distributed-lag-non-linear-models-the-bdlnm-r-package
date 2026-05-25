@@ -182,15 +182,22 @@ The cross-basis encodes the full bivariate exposure-lag-response surface in a si
 
 ## Spatial Bayesian DLNMs (SB-DLNMs)
 
-::: {.callout-note appearance = "minimal"}
-A Bayesian extension, **Spatial Bayesian Distributed Lag Non-Linear Models (SB-DLNMs)** [@SBDLNM], was proposed to overcome these limitations, allowing reliable estimation of small-area lagged non-linear associations 
+::: {.callout-note appearance="minimal"}
+A Bayesian extension, **Spatial Bayesian Distributed Lag Non-Linear Models (SB-DLNMs)** [@SBDLNM], was proposed to overcome these limitations, allowing reliable estimation of small-area lagged non-linear associations
 :::
 
-- It accounts for spatially structured differences in risk across small areas
+$$Y_{it} \sim \text{Poisson}(\mu_{it}) \qquad \log(\mu_{it}) = \alpha_i + \underbrace{cb(x_{it}, \ldots, x_{it-L}) \cdot \beta_i}_{\text{spatial cross-basis}} + \sum_{k} \gamma_k u_{kit}$$
 
-- Spatial random effects propagate information across locations, stabilising estimates in data-sparse areas
+$$\beta_i = \mu_\beta + \phi_i + \epsilon_i, \qquad \phi_i \mid \phi_{-i} \sim \mathcal{N}\!\left(\bar{\phi}_{\delta_i},\, \frac{\sigma^2_\phi}{|\delta_i|}\right)$$
 
-- The full bivariate exposure-lag-response surface is estimated in a **single stage**, preserving the lag dimension
+| Term | Description |
+|------|-------------|
+| $\beta_i$ | Location-specific cross-basis coefficients |
+| $\mu_\beta$ | Overall pooled exposure-lag-response association |
+| $\phi_i$ | Spatially structured random effect (ICAR prior) |
+| $\epsilon_i \sim \mathcal{N}(0, \sigma^2_\epsilon)$ | Unstructured random effect |
+| $\delta_i$ | Set of spatial neighbours of area $i$ |
+
 
 # The {bdlnm} R package
 
@@ -578,14 +585,6 @@ plot_ly(width = 850, height = 520) |>
   )
 ```
 
-## Exposure-lag-response surface
-
-The built-in `plot.bcrosspred()` function provides a quick visualization of the same surface directly from the `cpred` object:
-
-```{r echo = TRUE, fig.align = "center"}
-plot(cpred, ptype = "3d")
-```
-
 ## Lag-response associations
 
 Slicing the surface at each temperature value gives one lag-response curve per each exposure level:
@@ -658,14 +657,6 @@ p <- ggplot() +
 animate(p, nframes = 300, fps = 15, end_pause = 100)
 ```
 
-## Lag-response associations
-
-`plot.bcrosspred()` can slice at a specific temperature directly from the `cpred` object. For example, here the 99th percentile (extreme heat):
-
-```{r echo = TRUE, fig.align = "center"}
-plot(cpred, ptype = "slices", exp_at = round(quantile(london$tmean, 0.99), 1), log = "y")
-```
-
 ## Exposure-response associations
 
 Slicing at each lag value gives one exposure-response curve per lag:
@@ -673,10 +664,9 @@ Slicing at each lag value gives one exposure-response curve per lag:
 ```{r echo = FALSE, fig.width = 12, fig.height = 8, fig.align="center"}
 RRfit <- rbind(matRRfit)
 
-# Split data
 RRfit_lags <- RRfit |>
-  filter(!lag %in% c("overall")) |>
-  mutate(lag = as.numeric(lag))
+  filter(lag %in% 0:4) |>
+  mutate(lag = as.factor(lag))
 
 temps <- cpred$exp_at
 t_cold <- temps[which.min(abs(temps - quantile(temps, 0.01)))]
@@ -690,18 +680,15 @@ p_main <- ggplot() +
     aes(x = temperature, y = RR, group = lag, color = lag),
     linewidth = 0.8
   ) +
-  scale_color_gradientn(
-    colours = c(
-      "black",
-      "#2b1d2f",
-      "#4a2f5e",
-      "#6a4c93",
-      "#8b6bb8",
-      "#b39cdb",
-      "#d8c9f1",
-      "#f3eef5"
+  scale_color_manual(
+    values = c(
+      "0" = "#1a237e",
+      "1" = "#1565c0", 
+      "2" = "#0288d1",
+      "3" = "#00897b",
+      "4" = "#43a047"
     ),
-    values = scales::rescale(c(0, 0.5, 1, 2, 3, 4, 5, 10, 20))
+    name = "Lag"
   ) +
   geom_hline(
     yintercept = 1,
@@ -806,14 +793,6 @@ p_hist <- ggplot(london, aes(x = tmean)) +
 
 # Combine them:
 p_main / p_hist + plot_layout(heights = c(3, 1))
-```
-
-## Exposure-response associations
-
-`plot.bcrosspred()` can also slice at a specific lag directly from the `cpred` object. For example, here lag 0 (the immediate effect only):
-
-```{r echo = TRUE, fig.align = "center"}
-plot(cpred, ptype = "slices", lag_at = 0, log = "y")
 ```
 
 ## Overall cumulative effect
@@ -837,13 +816,7 @@ allRRfit <- data.frame(
   RR_uci = cpred$allRRfit.summary[, "0.975quant"]
 )
 
-RRfit <- rbind(matRRfit, allRRfit)
-
-# Split data
-RRfit_lags <- RRfit |>
-  filter(!lag %in% c("overall")) |>
-  mutate(lag = as.numeric(lag))
-RRfit_overall <- RRfit |>
+RRfit_overall <- allRRfit |>
   filter(lag %in% c("overall"))
 
 temps <- cpred$exp_at
@@ -851,31 +824,9 @@ t_cold <- temps[which.min(abs(temps - quantile(temps, 0.01)))]
 t_hot <- temps[which.min(abs(temps - quantile(temps, 0.99)))]
 
 # Top plot: exposure-response curves for each lag and overall
-p_main <- ggplot() +
-  # Background: all lags, fading from vivid (small) to pale (large)
-  geom_line(
-    data = RRfit_lags,
-    aes(x = temperature, y = RR, group = lag, color = lag),
-    linewidth = 0.8
-  ) +
-  scale_color_gradientn(
-    colours = c(
-      "black",
-      "#2b1d2f",
-      "#4a2f5e",
-      "#6a4c93",
-      "#8b6bb8",
-      "#b39cdb",
-      "#d8c9f1",
-      "#f3eef5"
-    ),
-    values = scales::rescale(c(0, 0.5, 1, 2, 3, 4, 5, 10, 20))
-  ) +
-  new_scale_color() +
-  new_scale_fill() +
+p_main <- ggplot(data = RRfit_overall) +
   # Credible intervals
   geom_ribbon(
-    data = RRfit_overall,
     aes(
       x = temperature,
       ymin = RR_lci,
@@ -886,7 +837,6 @@ p_main <- ggplot() +
   ) +
   # Highlighted curves
   geom_line(
-    data = RRfit_overall,
     aes(x = temperature, y = RR, color = "1"),
     linewidth = 1.2
   ) +
@@ -894,8 +844,8 @@ p_main <- ggplot() +
     yintercept = 1,
     linetype = "dashed"
   ) +
-  scale_color_manual(values = "#a6761d", labels = "Overall (CrI95%)") +
-  scale_fill_manual(values = "#a6761d", labels = "Overall (CrI95%)") +
+  scale_color_manual(values = "black", labels = "Overall (CrI95%)") +
+  scale_fill_manual(values = "black", labels = "Overall (CrI95%)") +
   scale_y_continuous(
     transform = "log10",
     breaks = sort(c(0.8, pretty_breaks(5)(c(0.8, 4))))
@@ -997,12 +947,19 @@ p_hist <- ggplot(london, aes(x = tmean)) +
 p_main / p_hist + plot_layout(heights = c(3, 1))
 ```
 
-## Overall cumulative effect
+## `plot.bcrosspred()` built-in visualisations
 
-`plot.bcrosspred()` produces the overall curve directly from the `cpred` object:
+```{r echo = TRUE}
+#| fig-height: 5
+#| out-width: "100%"
+#| fig-align: "center"
 
-```{r echo = TRUE, fig.align = "center"}
-plot(cpred, ptype = "overall", log = "y")
+par(mfrow = c(2, 2), mar = c(4, 4, 2, 1))
+plot(cpred, ptype = "3d", main = "Exposure-lag-response surface")
+plot(cpred, ptype = "overall", log = "y", main = "Overall cumulative effect")
+plot(cpred, ptype = "slices", lag_at = 0, log = "y", main = "Exposure-response (lag 0)")
+plot(cpred, ptype = "slices", exp_at = round(quantile(london$tmean, 0.99), 1), log = "y", 
+main = "Lag-response (99th pct temperature)")
 ```
 
 ## Attributable burden
@@ -1018,21 +975,15 @@ The idea is to compare observed mortality under real temperature conditions agai
 
 ## Attributable burden
 
-For a given centered effect $\beta_x$, the measures are defined as:
+For a given effect $\beta_x$, associated to a certain $x$ exposition:
 
 $$\text{AF}_{x,t} = 1 - \exp(-\beta_x) \qquad \text{AN}_{x,t} = n \cdot \text{AF}_{x,t}$$
 
 ::: {.callout-warning appearance="minimal"}
-Effects $\beta_x$ must be centered at a reference exposure (e.g. MMT) before computing attributable measures. Uncentered effects produce uninterpretable results
+Effects $\beta_x$ **must be centered** at a reference exposure (e.g. MMT) before computing attributable measures — uncentered effects produce uninterpretable results
 :::
 
-## Attributable burden in a DLNM
-
-- In a DLNM there is no single $\beta_x$ as the effect is distributed across lags
-
-- The `attributable()` function handles this through two perspectives [@attrdl]:
-
-[![Conceptual model for the interpretation of exposure-lag-response associations: forward (left panel) and backward (right panel) perspectives.](WWW/12874_2014_Article_1076_Fig1_HTML.webp)](https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-14-55)
+The **overall cumulative effect** $\beta_{x,\,\text{overall}}$ can be used as $\beta_x$ (forward perspective)
 
 ## Computing attributable burden
 
@@ -1162,13 +1113,13 @@ rbind(
 
 ## Conclusions
 
-- The {bdlnm} package provides a powerful and accessible implementation of Bayesian Distributed Lag Non-Linear Models in R, built on top of the widely used {dlnm} framework
+- The {bdlnm} package provides a complete and accessible implementation of Bayesian Distributed Lag Non-Linear Models in R
+
+- It provides a full DLNM workflow in just a few steps: model fitting, prediction, and attribution
 
 - Combining the flexibility of DLNMs with full Bayesian inference enables researchers to fit more realistic and complex models while fully propagating uncertainty
 
 - The posterior distribution of all estimates allows direct uncertainty quantification of derived measures (e.g., MMT, attributable fractions, attributable numbers) without additional approximations
-
-- It provides a complete DLNM workflow in just a few steps: model fitting, prediction, and attribution
 
 - The framework extends beyond environmental epidemiology to any setting with time-varying exposures and delayed effects making it a general tool for time series analysis
 

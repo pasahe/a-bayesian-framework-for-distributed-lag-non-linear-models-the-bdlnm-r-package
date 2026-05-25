@@ -1,2 +1,4 @@
 Old/
 .Rhistory
+/.quarto/
+**/*.quarto_ipynb
