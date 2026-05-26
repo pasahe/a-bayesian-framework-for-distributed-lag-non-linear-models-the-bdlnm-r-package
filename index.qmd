@@ -981,7 +981,7 @@ rbind(
       <img src="https://image.thum.io/get/width/600/https://github.com/pasahe/bdlnm"
            style="width: 100%; height: 160px; object-fit: cover;" alt="GitHub repository"/>
       <div style="padding: 0.6rem 0.8rem; font-size: 0.8em; line-height: 1.4;">
-        🐛 Bug reports and contributions welcome via the GitHub repository<br>
+        🐛 Bug reports and contributions are welcome via the GitHub repository<br>
         <span style="font-size: 0.85em; color: #0077cc;">https://github.com/pasahe/bdlnm</span>
       </div>
     </a>
@@ -998,5 +998,29 @@ rbind(
 
 </div>
 ```
+
+## Susie Bayarri
+
+:::: {.columns}
+
+::: {.column width="35%"}
+
+![](WWW/susie_bayarri.jpg){width=90%}
+
+**María Jesús "Susie" Bayarri**  
+(1956-2014)
+
+:::
+
+::: {.column width="65%"}
+
+> *"Statistics has struggled for nearly a century over the issue of whether the Bayesian or frequentist paradigm is superior. This debate is far from over and, indeed, should continue, since there are fundamental philosophical and pedagogical issues at stake. At the methodological level, however, the debate has become considerably muted, with the recognition that each approach has a great deal to contribute to statistical practice and each is actually essential for full development of the other approach."*
+>
+> **M. J. Bayarri & J. O. Berger (2004)**  
+> *The Interplay of Bayesian and Frequentist Analysis*, Statistical Science
+
+:::
+
+::::
 
 ## References
