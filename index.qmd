@@ -19,14 +19,20 @@ author:
 date: "2026-05-26"
 date-format: long
 bibliography: references.bib
-format: 
+
+title-slide-attributes:
+  data-background-image: "WWW/mar_de_nubes.jpg"
+  data-background-size: cover
+  data-background-opacity: "0.4"
+
+format:
   revealjs:
-    self-contained: true
-    smaller: true
-    slide-number: true
-    controls: true
-    progress: true
     theme: [default, WWW/bdlnm-theme.scss]
+    logo: "WWW/logo.png"
+    slide-number: true
+    progress: true
+    smaller: true
+    self-contained: true
 ---
 
 ```{r setup, echo = FALSE, include = FALSE}
@@ -61,45 +67,30 @@ library(tictoc)
 
 ## Motivation
 
-- Climate change is intensifying exposure to extreme environmental conditions: heatwaves, air pollution, and cold spells (among others) are becoming more frequent and severe
+- Climate change is intensifying extreme environmental conditions: heatwaves, cold spells, and air pollution episodes are becoming more frequent and severe
 
-- Environmental exposures rank among the strongest drivers of population health, often exerting a larger influence than genetic variation [@argentieri]
+- Environmental exposures rarely act instantaneously, as their health impact unfolds over time:
 
-- Understanding how environmental exposures effects healths is therefore essential for public health research
+  - A heatwave today may elevate mortality risk several days later
 
-## Distributed Lag Non-Linear Models (DLNMs)
-
-- The relationship between environment and health is complex: effects are typically **non-linear** and **delayed**, making them hard to capture with standard regression approaches
-
-- Environmental exposures rarely act instantaneously, their health impact unfolds over time:
-
-  - A heatwave today may elevate mortality risk some days later
+  - Cold temperatures can trigger cardiovascular events long after exposure
 
   - Air pollution accumulates biological damage across days or weeks
 
-  - Cold temperatures can trigger cardiovascular events several days after exposure
+- Standard regression approaches struggle to capture these **delayed** and usually **non-linear** effects simultaneously
 
-::: {.callout-note appearance = "minimal"}
-**Distributed Lag Non-Linear Models (DLNMs)** [@gasparrini] are the standard framework for capturing these dynamics. They simultaneously model two dimensions of risk:
+## Distributed Lag Non-Linear Models (DLNMs)
 
-1. How risk changes across exposure levels (**exposure-response**)
-2. How risk evolves over time after exposure (**lag-response**)
-
-DLNMs can be applied to any setting involving two time series and a delayed effect: environmental epidemiology, econometrics, pharmacology, and beyond
-:::
-
-## DLNMs
+DLNMs [@gasparrini] are the standard framework for capturing these dynamics, simultaneously modelling two dimensions of risk:
 
 :::: {.columns}
 
-::: {.column width="50%"}
-1. **Exposure-response:** non-linear association between exposure value and health risk
-
-<br>
+::: {.column width="45%"}
+1. **Exposure-response:** how risk changes across exposure levels
 
 ```{r}
 #| fig-width: 4
-#| fig-height: 2.3
+#| fig-height: 2.1
 #| out-width: "100%"
 #| echo: false
 #| fig-align: "center"
@@ -134,19 +125,22 @@ axis(1, labels = FALSE, tick = FALSE)
 
 :::
 
-::: {.column width="50%"}
-2. **Lag-response:** how the effect of a single exposure event evolves across subsequent lags
+::: {.column width="5%"}
+:::
 
-<img src="WWW/lag_response.jpg" style="width: 100%; max-width: 420px;"/>
+::: {.column width="45%"}
+2. **Lag-response:** how risk evolves over time after exposure (lags)
+
+<img src="WWW/lag_response.jpg" style="width: 75%;"/>
 :::
 
 ::::
 
-Usually, both dimensions are modelled simultaneously using **splines** (natural cubic or B-splines), producing a smooth bivariate surface over exposure and lag
+- Usually splines (natural cubic, B-splines or P-splines) are used to define these usually non-linear relationships in each dimension. The tensor product of the two spline bases defines the **cross-basis**: a smooth bivariate surface over exposure and lag
 
 ## DLNMs: Model formulation
 
-For time-series count data [@gasparrini]:
+For time-series count data:
 
 $$Y_t \sim \text{Poisson}(\mu_t)$$
 $$\log(\mu_t) = \alpha + \underbrace{cb(x_t, \ldots, x_{t-L}) \cdot \beta}_{\text{cross-basis}} + \sum_{k} \gamma_k u_{kt}$$
@@ -159,40 +153,19 @@ $$\log(\mu_t) = \alpha + \underbrace{cb(x_t, \ldots, x_{t-L}) \cdot \beta}_{\tex
 | $\gamma_k$ | Coefficients of the confounders |
 | $\alpha$  | Intercept |
 
-The cross-basis encodes the full bivariate exposure-lag-response surface in a single model term
+## Bayesian DLNMs
 
-## Cross-basis construction
+- Extending DLNMs to a Bayesian framework enables:
 
-The cross-basis combines the **exposure-response basis** and the **lag-response basis** through a tensor product:
+  - **Full uncertainty quantification** of all estimates via posterior distributions
 
-<br>
+  - **Uncertainty propagation** in derived measures (optimal exposure, attributable burden) without additional approximations
 
-![](www/crossbasis.png){fig-align="center"}
-
-## Limitations of classical DLNMs
-
-- Datasets are becoming larger and more complex, with studies increasingly featuring granular spatial data across many locations
-
-- Classical frequentist DLNMs rely on a **two-stage approach**:
-
-  1. Independent DLNMs are fitted at each location separately (first stage)
-  2. Location-specific estimates are pooled via multivariable meta-analysis (second stage)
-
-::: {.callout-warning appearance = "minimal"}
-**Key limitations**
-
-- **Ignores spatial structure**: borrows no strength across neighbouring locations, discarding information about spatial variation in risk
-
-- **Collapses the lag dimension**: first-stage models typically reduce to a single lag or cumulative effect, discarding the full lag-response surface
-
-- **Unstable in sparse data**: independent models fitted in small areas with few events yield unreliable or unidentifiable estimates
-:::
+  - **Hierarchical extensions** (e.g. Spatial Bayesian DLNMs)
 
 ## Spatial Bayesian DLNMs (SB-DLNMs)
 
-::: {.callout-note appearance="minimal"}
-A Bayesian extension, **Spatial Bayesian Distributed Lag Non-Linear Models (SB-DLNMs)** [@SBDLNM], was proposed to overcome these limitations, allowing reliable estimation of small-area lagged non-linear associations
-:::
+SB-DLNMs [@SBDLNM] adds a spatial structure to the cross-basis coefficients for reliable small-area estimation:
 
 $$Y_{it} \sim \text{Poisson}(\mu_{it}) \qquad \log(\mu_{it}) = \alpha_i + \underbrace{cb(x_{it}, \ldots, x_{it-L}) \cdot \beta_i}_{\text{spatial cross-basis}} + \sum_{k} \gamma_k u_{kit}$$
 
@@ -206,26 +179,43 @@ $$\beta_i = \mu_\beta + \phi_i + \epsilon_i, \qquad \phi_i \mid \phi_{-i} \sim \
 | $\epsilon_i \sim \mathcal{N}(0, \sigma^2_\epsilon)$ | Unstructured random effect |
 | $\delta_i$ | Set of spatial neighbours of area $i$ |
 
-
 # The {bdlnm} R package
 
 ## {bdlnm}
 
-- The goal of the {bdlnm} R package is to provide a software for extending frequentist DLNMs to all kinds of Bayesian DLNMs (B-DLNMs)
+:::: {.columns style="display:flex; flex-wrap:nowrap;"}
 
-- It's based on the package {dlnm}, which is the reference package used for DLNMs in a frequentist perspective [@dlnm]
+::: {.column width="30%"}
+![](WWW/logo.png){fig-align="center"}
+:::
 
-- It uses R-INLA [@rinla] for Bayesian inference
+::: {.column width="5%"}
 
-<hr>
+<hr style="width:2px; height:370px; background-color:#6C878F; border:none; margin-top: 30% !important; margin:0 auto; " />
 
-Published in CRAN since March 2026:
+:::
+
+::: {.column width="65%" style="padding-left: 2rem; padding-top: 2rem"}
+
+- The goal of {bdlnm} is to extend frequentist DLNMs to all kinds of Bayesian DLNMs (B-DLNMs)
+
+- Built on **{dlnm}**, the reference package for frequentist DLNMs [@dlnm]
+
+- Uses **R-INLA** [@rinla] for efficient Bayesian inference
+
+:::
+
+::::
+
+<hr style="margin-top: -3rem;">
+
+Published on CRAN since March 2026:
 
 <center>
-[<img src="https://www.r-pkg.org/badges/version/bdlnm" height="28">](https://cran.r-project.org/package=bdlnm)&#160;&#160;
-[<img src="https://codecov.io/gh/pasahe/bdlnm/branch/main/graph/badge.svg" height="28">](https://app.codecov.io/gh/pasahe/bdlnm?branch=main)&#160;&#160;
-[<img src="https://cranlogs.r-pkg.org/badges/bdlnm" height="28">](https://cran.r-project.org/package=bdlnm)&#160;&#160;
-[<img src="https://cranlogs.r-pkg.org/badges/grand-total/bdlnm" height="28">](https://cran.r-project.org/package=bdlnm)
+[<img src="https://www.r-pkg.org/badges/version/bdlnm" height="26">](https://cran.r-project.org/package=bdlnm)&#160;&#160;
+[<img src="https://codecov.io/gh/pasahe/bdlnm/branch/main/graph/badge.svg" height="26">](https://app.codecov.io/gh/pasahe/bdlnm?branch=main)&#160;&#160;
+[<img src="https://cranlogs.r-pkg.org/badges/bdlnm" height="26">](https://cran.r-project.org/package=bdlnm)&#160;&#160;
+[<img src="https://cranlogs.r-pkg.org/badges/grand-total/bdlnm" height="26">](https://cran.r-project.org/package=bdlnm)
 </center>
 
 ## Overview of the package
@@ -243,26 +233,6 @@ Published in CRAN since March 2026:
 | | `plot.optimal_exposure()` | New |
 
 : {tbl-colwidths="[28, 36, 36]"}
-:::
-
-## Installation
-
-You can install the latest stable version in CRAN:
-
-```{r echo = TRUE, eval = FALSE}
-install.packages("bdlnm")
-library(bdlnm)
-```
-
-::: {.callout-warning appearance="minimal"}
-At least the stable version of INLA 23.4.24 (or newest) must be installed beforehand. 
-You can install the newest stable INLA version by:
-
-```{r echo = TRUE, eval = FALSE}
-install.packages("INLA", repos=c(getOption("repos"), INLA="https://inla.r-inla-download.org/R/stable"), 
-dep=TRUE)
-```
-
 :::
 
 # Hands-on {bdlnm}: An application
@@ -366,69 +336,47 @@ animate(p, nframes = 300, fps = 10, end_pause = 100)
 
 ## Model specification
 
-$$Y_t \sim \text{Poisson}(\mu_t), \qquad \log(\mu_t) = \alpha + cb(x_t, \ldots, x_{t-L}) \cdot \beta + \sum_{k} \gamma_k u_{kt}$$
-
-Following standard choices in temperature-mortality literature [@gasparrini]:
+$$Y_t \sim \text{Poisson}(\mu_t), \quad \quad \log(\mu_t) = \alpha + cb(x_t, \ldots, x_{t-L}) \cdot \beta + \sum_{k} \gamma_k u_{kt}$$
 
 :::: {.columns}
 
 ::: {.column width="50%"}
 **Cross-basis** ($cb$)
 
-- Exposure-response: natural spline, knots at the **10th**, **75th**, and **90th** percentiles of temperature
-
-- Lag-response: natural spline, **3** knots equally spaced on the log scale, max lag of **21 days**
+- Exposure-response: natural spline, knots at **10th**, **75th**, **90th** percentiles
+- Lag-response: natural spline, **3** knots on log scale, max lag **21 days**
 :::
 
 ::: {.column width="50%"}
 **Confounders** ($u_{kt}$)
 
-- Seasonality and long-term trend: natural spline with **8 df/year**
-
-- Day of the week: factor variable
+- Seasonality/trend: natural spline, **8 df/year**
+- Day of week: factor
 :::
 
 ::::
 
 ## Building the cross-basis
 
-Using the `dlnm` package to construct the cross-basis matrix `cb`:
+- We have to use first the {dlnm} package to build the cross-basis:
 
 ```{r echo = TRUE}
-# Exposure-response and lag-response spline parameters
-dlnm_var <- list(
-  var_prc = c(10, 75, 90),
-  var_fun = "ns",
-  lag_fun = "ns",
-  max_lag = 21,
-  lagnk = 3
-)
-
-# Build cross-basis 
 argvar <- list(
-  fun = dlnm_var$var_fun,
-  knots = quantile(london$tmean, dlnm_var$var_prc / 100, na.rm = TRUE),
+  fun = "ns",
+  knots = quantile(london$tmean, c(10, 75, 90) / 100, na.rm = TRUE),
   Bound = range(london$tmean, na.rm = TRUE)
 )
 arglag <- list(
-  fun = dlnm_var$lag_fun,
-  knots = logknots(dlnm_var$max_lag, nk = dlnm_var$lagnk)
+  fun = "ns",
+  knots = logknots(21, nk = 3)
 )
-
-cb <- crossbasis(london$tmean, lag = dlnm_var$max_lag, argvar, arglag)
+cb <- crossbasis(london$tmean, lag = 21, argvar, arglag)
 ```
 
-## Building the cross-basis
-
-Seasonality term and temperature prediction grid:
+- And build the seasonality and temperature prediction grid:
 
 ```{r echo = TRUE}
 seas <- ns(london$date, df = round(8 * length(london$date) / 365.25))
-```
-
-Finally, we have to define the temperature grid in which predictions will be made:
-
-```{r echo = TRUE}
 temp <- round(seq(min(london$tmean), max(london$tmean), by = 0.1), 1)
 ```
 
@@ -558,251 +506,49 @@ cpred$matRRfit.summary[1:4, 1:4, 1, drop = FALSE]
 
 ::::
 
-## Exposure-lag-response surface
+## `plot.bcrosspred()`: visualise predictions
 
-The full bivariate association can be represented as a 3-D surface over temperature and lag, giving the RR at each specific temperature-lag combination:
-
-```{r out.width = "100%"}
-matRRfit_median <- cpred$matRRfit.summary[,, "0.5quant"]
-x <- rownames(matRRfit_median)
-y <- colnames(matRRfit_median)
-z <- t(matRRfit_median)
-
-zmin <- min(z, na.rm = TRUE)
-zmax <- max(z, na.rm = TRUE)
-mid <- (1 - zmin) / (zmax - zmin)
-
-plot_ly(width = 850, height = 520) |>
-  add_surface(
-    x = x,
-    y = y,
-    z = z,
-    surfacecolor = z,
-    cmin = zmin,
-    cmax = zmax,
-    colorscale = list(
-      c(0, "#00696e"),
-      c(mid * 0.5, "#80c8c8"),
-      c(mid, "#f5f0e8"),
-      c(mid + (1 - mid) * 0.5, "#c2714f"),
-      c(1, "#6b1c1c")
-    ),
-    colorbar = list(title = "RR")
-  ) |>
-  add_surface(
-    x = x,
-    y = y,
-    z = matrix(1, nrow = length(y), ncol = length(x)),
-    colorscale = list(c(0, "black"), c(1, "black")),
-    opacity = 0.4,
-    showscale = FALSE
-  ) |>
-  layout(
-    scene = list(
-      xaxis = list(title = "Temperature (°C)"),
-      yaxis = list(title = "Lag", tickvals = y, ticktext = gsub("lag", "", y)),
-      zaxis = list(title = "RR"),
-      camera = list(eye = list(x = 1.5, y = -1.8, z = 0.8))
-    )
-  )
+```{r echo = TRUE, eval = FALSE}
+plot(cpred, ptype = "3d")
+plot(cpred, ptype = "overall")
+plot(cpred, ptype = "slices",  lag_at = 0)
+plot(cpred, ptype = "slices",  exp_at = round(quantile(london$tmean, 0.99), 1))
 ```
 
-## Overall cumulative effect
-
-Summing all lag contributions gives the **overall cumulative exposure-response curve** which is the most commonly reported summary in temperature-mortality studies:
-
-$$RR_{x,\,\text{overall}} = \exp\!\Bigl(\sum_{l=0}^{L} \beta_{x,l}\Bigr)$$
-
-::: {.callout-note appearance="minimal"}
-This collapses the 3-D surface into a single curve, showing how the total accumulated risk summing up all the lags varies with temperature
-:::
-
-## Overall cumulative effect
-
-```{r, fig.width = 12, fig.height = 8, fig.align="center"}
-allRRfit <- data.frame(
-  temperature = as.numeric(rownames(cpred$allRRfit.summary)),
-  lag = "overall",
-  RR = cpred$allRRfit.summary[, "0.5quant"],
-  RR_lci = cpred$allRRfit.summary[, "0.025quant"],
-  RR_uci = cpred$allRRfit.summary[, "0.975quant"]
-)
-
-RRfit_overall <- allRRfit |>
-  filter(lag %in% c("overall"))
-
-temps <- cpred$exp_at
-t_cold <- temps[which.min(abs(temps - quantile(temps, 0.01)))]
-t_hot <- temps[which.min(abs(temps - quantile(temps, 0.99)))]
-
-# Top plot: exposure-response curves for each lag and overall
-p_main <- ggplot(data = RRfit_overall) +
-  # Credible intervals
-  geom_ribbon(
-    aes(
-      x = temperature,
-      ymin = RR_lci,
-      ymax = RR_uci,
-      fill = "1"
-    ),
-    alpha = 0.2
-  ) +
-  # Highlighted curves
-  geom_line(
-    aes(x = temperature, y = RR, color = "1"),
-    linewidth = 1.2
-  ) +
-  geom_hline(
-    yintercept = 1,
-    linetype = "dashed"
-  ) +
-  scale_color_manual(values = "black", labels = "Overall (CrI95%)") +
-  scale_fill_manual(values = "black", labels = "Overall (CrI95%)") +
-  scale_y_continuous(
-    transform = "log10",
-    breaks = sort(c(0.8, pretty_breaks(5)(c(0.8, 4))))
-  ) +
-  labs(
-    x = NULL,
-    y = "Relative Risk (RR)",
-    color = NULL,
-    fill = NULL
-  ) +
-  theme_minimal() +
-  theme(
-    legend.position = "top",
-    axis.text.x = element_blank(),
-    plot.margin = margin(8, 8, 0, 8)
-  )
-
-# Position of MMT within the temperature range [0, 1]
-temp_range <- range(cpred$exp_at)
-mid_pos <- (cen - temp_range[1]) / (temp_range[2] - temp_range[1])
-
-# Bottom plot: histogram with percentile lines
-p_hist <- ggplot(london, aes(x = tmean)) +
-  geom_histogram(
-    aes(y = after_stat(density), fill = after_stat(x)),
-    binwidth = 0.5,
-    color = "black",
-    linewidth = 0.2
-  ) +
-  geom_vline(
-    xintercept = t_cold,
-    linetype = "dashed",
-    color = "#053061",
-    linewidth = 0.6
-  ) +
-  geom_vline(
-    xintercept = t_hot,
-    linetype = "dashed",
-    color = "#67001f",
-    linewidth = 0.6
-  ) +
-  geom_vline(
-    xintercept = cen,
-    linetype = "dashed",
-    color = "grey20",
-    linewidth = 0.6
-  ) +
-  annotate(
-    "text",
-    x = t_cold,
-    y = Inf,
-    label = "1st pct",
-    vjust = 1.4,
-    hjust = 1.1,
-    size = 3.2,
-    color = "#053061"
-  ) +
-  annotate(
-    "text",
-    x = t_hot,
-    y = Inf,
-    label = "99th pct",
-    vjust = 1.4,
-    hjust = -0.1,
-    size = 3.2,
-    color = "#67001f"
-  ) +
-  annotate(
-    "text",
-    x = cen,
-    y = Inf,
-    label = "MMT",
-    vjust = 1.4,
-    hjust = -0.1,
-    size = 3.2,
-    color = "grey20"
-  ) +
-  scale_x_continuous(limits = range(cpred$exp_at)) +
-  scale_fill_gradientn(
-    colours = c(
-      "#2166ac",
-      "#4393c3",
-      "#92c5de",
-      "#d1e5f0",
-      "#f7f7f7",   # white = MMT
-      "#fddbc7",
-      "#f4a582",
-      "#d6604d",
-      "#b2182b"
-    ),
-    values = c(
-      0,
-      mid_pos * 0.25,
-      mid_pos * 0.50,
-      mid_pos * 0.75,
-      mid_pos,                              # white anchored at MMT
-      mid_pos + (1 - mid_pos) * 0.25,
-      mid_pos + (1 - mid_pos) * 0.50,
-      mid_pos + (1 - mid_pos) * 0.75,
-      1
-    ),
-    name = "Temperature (°C)"
-  ) +
-  labs(x = "Temperature (°C)", y = "Density") +
-  theme_minimal() +
-  theme(
-    plot.margin = margin(20, 8, 8, 8),
-    legend.position = "bottom"
-  )
-
-# Combine them:
-p_main / p_hist + plot_layout(heights = c(3, 1))
-```
-
-## `plot.bcrosspred()` built-in visualisations
-
-```{r echo = TRUE}
+```{r echo = FALSE}
 #| fig-height: 5
 #| out-width: "100%"
-#| fig-align: "center"
-
-par(mfrow = c(2, 2), mar = c(4, 4, 2, 1))
-plot(cpred, ptype = "3d", main = "Exposure-lag-response surface")
-plot(cpred, ptype = "overall", log = "y", main = "Overall cumulative effect")
-plot(cpred, ptype = "slices", lag_at = 0, log = "y", main = "Exposure-response (lag 0)")
-plot(cpred, ptype = "slices", exp_at = round(quantile(london$tmean, 0.99), 1), log = "y", 
-main = "Lag-response (99th pct temperature)")
+layout(matrix(c(
+  1, 2,
+  1, 3,
+  1, 4
+), nrow = 3, byrow = TRUE),
+widths = c(1.4, 1))
+par(mar = c(4, 4, 3, 1))
+plot(cpred, ptype = "3d",
+     main = "Exposure-lag-response surface")
+plot(cpred, ptype = "overall", log = "y",
+     main = "Overall cumulative effect")
+plot(cpred, ptype = "slices", lag_at = 0, log = "y",
+     main = "Exposure-response (lag 0)")
+plot(cpred, ptype = "slices",
+     exp_at = round(quantile(london$tmean, 0.99), 1),
+     log = "y",
+     main = "Lag-response (99th pct)")
 ```
 
 ## Attributable burden
 
-- The `attributable()` function estimates the mortality burden **attributable to non-optimal temperature exposures**:
+- The `attributable()` function estimates the mortality burden attributable to non-optimal temperature exposures:
 
   - **Attributable fraction (AF):** proportion of all mortality events attributable to temperature
   - **Attributable number (AN):** absolute number of deaths attributable to temperature
 
-::: {.callout-note appearance = "minimal"}
-The idea is to compare observed mortality under real temperature conditions against a counterfactual scenario where the population was always exposed to an optimal reference temperature (e.g. the MMT) over the same period
-:::
-
-- Therefore, if we have estimated $\beta_x$ associated with a certain exposure (**centered to an optimal reference one**) we can calculate the attribution to non-optimal temperature exposure as:
+- If we have estimated $\beta_x$ associated with a certain exposure (**centered to an optimal reference one**) we can calculate the attribution to non-optimal temperature exposure as:
 
 $$\text{AF}_{x,t} = 1 - \exp(-\beta_x) \qquad \text{AN}_{x,t} = n_t \cdot \text{AF}_{x,t}$$
 
-- In a DLNM setting, the **overall cumulative effect** $\beta_{x,\,\text{overall}}$ can be used as $\beta_x$ (forward)
+- In a DLNM setting, the **overall cumulative effect** $\beta_{x,\,\text{overall}}$ can be used as $\beta_x$ (forward perspective)
 
 ## Computing attributable burden
 
@@ -945,19 +691,15 @@ rbind(
 
 - The {bdlnm} package provides a complete and accessible implementation of Bayesian Distributed Lag Non-Linear Models in R
 
-- Combining the flexibility of DLNMs with full Bayesian inference enables researchers to fit more realistic and complex models while fully propagating uncertainty
+- Combining the flexibility of DLNMs with full Bayesian inference enables researchers to fit more realistic and complex models
 
 - The posterior distribution of all estimates allows direct uncertainty quantification of derived measures (e.g., MMT, attributable fractions, attributable numbers) without additional approximations
 
-- It constitutes a valuable tool for studying the health impacts of climate change and other environmental risks in increasingly data-rich settings
+- Posterior summaries are fully compatible with frequentist workflows, making adoption straightforward for practitioners familiar with {dlnm}
 
-- The framework extends beyond environmental epidemiology to any setting with time-varying exposures and delayed effects making it a general tool for time series analysis
+- {bdlnm} constitutes a valuable tool for environmental risk research and, more generally, for any time series analysis with delayed non-linear effects
 
 ## Present and future work
-
-**Currently in development:**
-
-- `mcmc_to_bdlnm()`: convert any object with posterior samples of DLNM coefficients from an MCMC algorithm (e.g. NIMBLE, Stan) into a `bdlnm` object, enabling broader model compatibility beyond INLA
 
 **Coming soon:**
 
@@ -966,6 +708,8 @@ rbind(
 - **Spatial B-DLNMs (SB-DLNM):** explicitly model spatial heterogeneity in exposure-lag-response associations across regions
 
 - **Parallelization:** faster inference via {futurize} for large datasets
+
+- **Compatibility beyond INLA:** use MCMC algorithm (e.g. NIMBLE, Stan) for Bayesian model estimation
 
 ## Further resources
 
@@ -976,7 +720,16 @@ rbind(
   <!-- Row 1: two cards side by side -->
   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
 
-<a href="https://github.com/pasahe/bdlnm" target="_blank"
+    <a href="https://pasahe.github.io/bdlnm/" target="_blank"
+       style="text-decoration: none; border: 0.5px solid #ccc; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; color: inherit;">
+      <img src="https://image.thum.io/get/width/600/https://pasahe.github.io/bdlnm/"
+           style="width: 100%; height: 160px; object-fit: cover;" alt="bdlnm package website"/>
+      <div style="padding: 0.6rem 0.8rem; font-size: 0.8em; line-height: 1.4;">
+        📦 Full tutorials available on the package website<br>
+        <span style="font-size: 0.85em; color: #0077cc;">https://pasahe.github.io/bdlnm/</span>
+      </div>
+    </a>
+    <a href="https://github.com/pasahe/bdlnm" target="_blank"
        style="text-decoration: none; border: 0.5px solid #ccc; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; color: inherit;">
       <img src="https://image.thum.io/get/width/600/https://github.com/pasahe/bdlnm"
            style="width: 100%; height: 160px; object-fit: cover;" alt="GitHub repository"/>
@@ -985,42 +738,9 @@ rbind(
         <span style="font-size: 0.85em; color: #0077cc;">https://github.com/pasahe/bdlnm</span>
       </div>
     </a>
-    <a href="https://pasahe.github.io/bdlnm/" target="_blank"
-       style="text-decoration: none; border: 0.5px solid #ccc; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; color: inherit;">
-      <img src="https://image.thum.io/get/width/600/https://pasahe.github.io/bdlnm/"
-           style="width: 100%; height: 160px; object-fit: cover;" alt="bdlnm package website"/>
-      <div style="padding: 0.6rem 0.8rem; font-size: 0.8em; line-height: 1.4;">
-        📦 Full documented vignettes available on the package webpage<br>
-        <span style="font-size: 0.85em; color: #0077cc;">https://pasahe.github.io/bdlnm/</span>
-      </div>
-    </a>
   </div>
 
 </div>
 ```
-
-## Susie Bayarri
-
-:::: {.columns}
-
-::: {.column width="35%"}
-
-![](WWW/susie_bayarri.jpg){width=90%}
-
-**María Jesús "Susie" Bayarri**  
-(1956-2014)
-
-:::
-
-::: {.column width="65%"}
-
-> *"Statistics has struggled for nearly a century over the issue of whether the Bayesian or frequentist paradigm is superior. This debate is far from over and, indeed, should continue, since there are fundamental philosophical and pedagogical issues at stake. At the methodological level, however, the debate has become considerably muted, with the recognition that each approach has a great deal to contribute to statistical practice and each is actually essential for full development of the other approach."*
->
-> **M. J. Bayarri & J. O. Berger (2004)**  
-> *The Interplay of Bayesian and Frequentist Analysis*, Statistical Science
-
-:::
-
-::::
 
 ## References

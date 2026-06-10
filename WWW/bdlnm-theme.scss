@@ -5,7 +5,7 @@
 
 $body-bg:    #ffffff;
 $body-color: #2b2b2b;
-$link-color: #1a7a6e;
+$link-color: #6C878F;
 
 $font-family-sans-serif:  'IBM Plex Sans', sans-serif;
 $font-family-monospace:   'IBM Plex Mono', monospace;
@@ -17,7 +17,7 @@ $presentation-h2-font-size:    1.35em;
 $presentation-heading-color:   #1e1e1e;
 $presentation-heading-text-transform: none;
 
-$accent:  #1a7a6e;   /* teal green — main accent  */
+$accent:  #6C878F;   /* teal green — main accent  */
 $accent2: #e8f4f2;   /* teal tint — backgrounds   */
 $muted:   #6b6b6b;
 $orange:  #d97706;   /* warning accent             */
@@ -25,8 +25,8 @@ $orange2: #fef3e2;   /* orange tint                */
 
 /* Quarto callout colour variables — set here so Quarto uses them
    when generating the callout CSS, avoiding specificity battles   */
-$callout-color-note:    #1a7a6e;
-$callout-color-tip:     #1a7a6e;
+$callout-color-note:    #6C878F;
+$callout-color-tip:     #6C878F;
 $callout-color-warning: #d97706;
 
 /*-- scss:rules --*/
@@ -279,7 +279,7 @@ div.callout-warning {
 
 /* ── Slide background offset ─────────────────────────────── */
 .slide-background-content {
-  margin-top: 2%;
+  margin-top: 0%;
 }
 
 #refs {
