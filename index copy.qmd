@@ -1,0 +1,198 @@
+---
+title: "A Bayesian framework for distributed lag non-linear models: the {bdlnm} R package"
+author: 
+ - name: "**Pau<br>Satorra**"
+   affiliations: 
+    - name: "Biostatistics Support and Research Unit, IGTP" 
+ - name: "**Marcos Quijal-Zamorano**"
+   affiliations: 
+    - name: "Institute of Social and Preventive Medicine (ISPM), University of Bern" 
+ - name: "**Joan Ballester**"
+   affiliations: 
+    - name: "Institut de Salut Global de Barcelona (ISGlobal)" 
+ - name: "**Miguel Ángel Martínez-Beneito**"
+   affiliations: 
+    - name: "Departament d'Estadística i Investigació Operativa, Universitat de València"
+ - name: "**Marc Marí-Dell'Olmo**"
+   affiliations: 
+    - name: "Agència de Salut Pública de Barcelona (ASPB)"
+date: "2026-05-26"
+date-format: long
+bibliography: references.bib
+
+title-slide-attributes:
+  data-background-image: "WWW/mar_de_nubes.jpg"
+  data-background-size: cover
+  data-background-opacity: "0.4"
+
+format:
+  revealjs:
+    theme: [default, WWW/bdlnm-theme.scss]
+    logo: "WWW/logo.png"
+    slide-number: true
+    progress: true
+    smaller: true
+    self-contained: true
+---
+
+```{r setup, echo = FALSE, include = FALSE}
+library(bdlnm)
+
+# DLNMs and splines
+library(dlnm)
+library(splines)
+
+# Data manipulation
+library(dplyr)
+library(reshape2)
+library(stringr)
+library(lubridate)
+
+# Visualization
+library(ggplot2)
+library(gganimate)
+library(ggnewscale)
+library(patchwork)
+library(scales)
+library(plotly)
+
+# Tables
+library(gt)
+
+# Execution time
+library(tictoc)
+```
+
+## Distributed Lag Non-Linear Models (DLNMs)
+
+DLNMs [@gasparrini] are the standard framework for capturing these dynamics, simultaneously modelling two dimensions of risk:
+
+:::: {.columns}
+
+::: {.column width="42.5%"}
+1. **Exposure-response:** how risk changes across exposure levels
+
+```{r}
+#| fig-width: 4
+#| fig-height: 2.1
+#| out-width: "100%"
+#| echo: false
+#| fig-align: "center"
+
+x_ref <- 6.5
+
+f <- function(x) {
+  ifelse(x <= x_ref,
+         0.06 * (x - x_ref)^2,
+         0.55 * (x - x_ref)^2)
+}
+
+x_seq   <- seq(0, 10, length.out = 500)
+y_curve <- f(x_seq)
+
+par(mar = c(3.5, 3.5, 1, 1),
+    mgp = c(2, 0.7, 0))       # c(axis.title, axis.labels, axis.line)
+
+plot(x_seq, y_curve,
+     type = "l", lwd = 2.5,
+     xlab = "Exposure (x)", ylab = "Effect",
+     xaxt = "n", yaxt = "n",
+     xlim = c(0, 10),
+     ylim = c(-0.5, max(y_curve) + 0.3),
+     bty  = "l")
+
+abline(h = 0,     lwd = 1.2)
+axis(2, at = 0, labels = "0", cex.axis = 1.1)
+axis(1, labels = FALSE, tick = FALSE)
+```
+
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="42.5%"}
+2. **Lag-response:** how risk evolves over time after exposure (lags)
+
+<img src="WWW/lag_response.jpg" style="width: 75%;"/>
+:::
+
+::::
+
+- Usually splines (natural cubic, B-splines or P-splines) are used to define these usually non-linear relationships in each dimension.
+
+## Distributed Lag Non-Linear Models (DLNMs)
+
+- The tensor product of the two spline bases defines the **cross-basis**: a smooth bivariate surface over exposure and lag
+
+:::: {.columns}
+
+::: {.column width="32%"}
+1. **Exposure-response**
+
+```{r}
+#| fig-width: 4
+#| fig-height: 2.1
+#| out-width: "100%"
+#| echo: false
+#| fig-align: "center"
+
+x_ref <- 6.5
+
+f <- function(x) {
+  ifelse(x <= x_ref,
+         0.06 * (x - x_ref)^2,
+         0.55 * (x - x_ref)^2)
+}
+
+x_seq   <- seq(0, 10, length.out = 500)
+y_curve <- f(x_seq)
+
+par(mar = c(3.5, 3.5, 1, 1),
+    mgp = c(2, 0.7, 0))       # c(axis.title, axis.labels, axis.line)
+
+plot(x_seq, y_curve,
+     type = "l", lwd = 2.5,
+     xlab = "Exposure (x)", ylab = "Effect",
+     xaxt = "n", yaxt = "n",
+     xlim = c(0, 10),
+     ylim = c(-0.5, max(y_curve) + 0.3),
+     bty  = "l")
+
+abline(h = 0,     lwd = 1.2)
+axis(2, at = 0, labels = "0", cex.axis = 1.1)
+axis(1, labels = FALSE, tick = FALSE)
+```
+:::
+
+::: {.column width="3%"}
+<div style="text-align:center; font-size:1.5em; margin-top:100px;">
+$\times$
+</div>
+:::
+
+::: {.column width="32%"}
+2. **Lag-response**
+
+<img src="WWW/lag_response.jpg" style="width: 100%; max-height: 170px; object-fit: contain; display: block; margin: 0 auto;"/>
+:::
+
+::: {.column width="3%"}
+<div style="text-align:center; font-size:1.5em; margin-top:100px;">
+$=$
+</div>
+:::
+
+::: {.column width="30%"}
+<div style="text-align:center;">
+  <img src="WWW/crossbasis.png" style="width: 100%; max-height: 250px; object-fit: contain; margin-top: -10px;"/>
+</div>
+:::
+
+::::
