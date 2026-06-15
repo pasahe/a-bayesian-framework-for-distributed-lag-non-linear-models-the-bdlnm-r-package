@@ -141,7 +141,7 @@ axis(1, labels = FALSE, tick = FALSE)
 
 ::::
 
-- Usually splines (natural cubic, B-splines or P-splines) are used to define these usually non-linear relationships in each dimension.
+- Usually splines (natural cubic, B-splines or P-splines) are used to define these usually non-linear relationships in each dimension
 
 ## Distributed Lag Non-Linear Models (DLNMs)
 
@@ -301,7 +301,7 @@ Published on CRAN since March 2026:
 
 ## Temperature-mortality study
 
-- We assess the immediate and delayed non-linear effect of daily mean temperature on mortality (age 75+) in London, 2000–2011
+- We assess the immediate and delayed non-linear effect of daily mean temperature on mortality (age 75+) in London, 2000-2011
 
 - We will use the {bdlnm} built-in `london` dataset: one observation per day, containing mortality counts, mean temperature, and calendar variables:
 
@@ -567,7 +567,7 @@ plot(cpred, ptype = "3d")
 #| fig-height: 5
 #| out-width: "100%"
 par(mar = c(4, 4, 3, 1))
-plot(cpred, ptype = "3d", main = "Exposure-lag-response surface", zlab = "RR")
+plot(cpred, ptype = "3d", main = "Exposure-lag-response surface", zlab = "RR", xlab = "Temperature (ºC)")
 ```
 
 ## `plot.bcrosspred()`: visualise predictions {auto-animate="true"}
@@ -586,7 +586,7 @@ p <- persp(x = cpred$exp_at,
            ticktype = "detailed",
             theta = 210,
             phi = 30,
-            xlab = "Exposure",
+            xlab = "Temperature (ºC)",
             ylab = "Lag",
             zlab = "RR",
             col = "lightskyblue",
@@ -609,7 +609,9 @@ lines(xy, col = "red", lwd = 3)
 par(fig = c(0.45, 1, 0.15, 1), new = TRUE, mar = c(4, 4, 3, 1))
 plot(cpred, ptype = "slices",
      exp_at = round(quantile(london$tmean, 0.99), 1),
-     log = "y", main = "Lag-response (99th pct)")
+     log = "y", main = "Lag-response (99th pct)",
+     xlab = "Temperature (ºC)",
+     ylab = "RR")
 ```
 
 ## `plot.bcrosspred()`: visualise predictions {auto-animate="true"}
@@ -630,7 +632,7 @@ p <- persp(x = cpred$exp_at,
            ticktype = "detailed",
            theta = 210,
            phi = 30,
-           xlab = "Exposure",
+           xlab = "Temperature (ºC)",
            ylab = "Lag",
            zlab = "RR",
            col = "lightskyblue",
@@ -657,7 +659,9 @@ par(fig = c(0.45, 1, 0.15, 1), new = TRUE, mar = c(4, 4, 3, 1))
 plot(cpred, ptype = "slices",
      lag_at = 0,
      log = "y",
-     main = "Exposure-response (lag 0)")
+     main = "Exposure-response (lag 0)",
+     xlab = "Temperature (ºC)",
+     ylab = "RR")
 ```
 
 ## `plot.bcrosspred()`: visualise predictions {auto-animate="true"}
@@ -678,7 +682,7 @@ p <- persp(x = cpred$exp_at,
            ticktype = "detailed",
            theta = 210,
            phi = 30,
-           xlab = "Exposure",
+           xlab = "Temperature (ºC)",
            ylab = "Lag",
            zlab = "RR",
            col = "lightskyblue",
@@ -691,7 +695,9 @@ p <- persp(x = cpred$exp_at,
            main = "Exposure-lag-response surface")
 
 par(fig = c(0.45, 1, 0.15, 1), new = TRUE, mar = c(4, 4, 3, 1))
-plot(cpred, ptype = "overall", log = "y", main = "Overall cumulative effect")
+plot(cpred, ptype = "overall", log = "y", main = "Overall cumulative effect",
+     xlab = "Temperature (ºC)",
+     ylab = "RR")
 ```
 
 ## Attributable burden
@@ -705,9 +711,11 @@ plot(cpred, ptype = "overall", log = "y", main = "Overall cumulative effect")
 
 $$\text{AF}_{x,t} = 1 - \exp(-\beta_x) \qquad \text{AN}_{x,t} = n_t \cdot \text{AF}_{x,t}$$
 
-- It's important to center effects to the optimal temperature if we want to calculate the attribution to non-optimal ones
-
 - In a DLNM setting, the overall cumulative effect $\beta_{x,\,\text{overall}}$ can be used as $\beta_x$ (forward perspective)
+
+::: {.callout-warning appearance="minimal"}
+It's important to center effects to the optimal temperature if we want to calculate the attribution to non-optimal temperatures
+:::
 
 ## Computing attributable burden
 
@@ -731,7 +739,7 @@ List of 8
 
 ## Daily attributable fraction
 
-Time series of daily attributable fractions (AFs), together with the temperature exposition in that given day:
+Time series of daily attributable fractions (AF), together with the temperature exposition in that given day:
 
 ```{r echo = FALSE, fig.align = "center"}
 col_af <- "black"
@@ -877,11 +885,11 @@ Be cautious about the interpretation of these results as we estimate an associat
 
 **Coming soon:**
 
-- **Multi-location analysis:** model different exposure-lag-response curves across cities or regions within a single model (e.g., SB-DLNM)
+- **Multi-location analysis:** model different exposure-lag-response associations across cities or regions within a single model (e.g., SB-DLNM)
 
 - **Parallelization:** faster inference via {futurize} for large datasets
 
-- **Compatibility beyond INLA:** use MCMC algorithm (e.g. NIMBLE, Stan) for Bayesian model estimation
+- **Compatibility beyond INLA:** use MCMC algorithms (e.g. NIMBLE, Stan) for Bayesian inference
 
 ## Further resources
 

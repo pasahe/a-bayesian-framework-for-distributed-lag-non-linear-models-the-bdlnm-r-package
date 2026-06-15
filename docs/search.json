@@ -151,7 +151,7 @@
     "href": "index.html#distributed-lag-non-linear-models-dlnms",
     "title": "A Bayesian framework for distributed lag non-linear models: the {bdlnm} R package",
     "section": "Distributed Lag Non-Linear Models (DLNMs)",
-    "text": "Distributed Lag Non-Linear Models (DLNMs)\nDLNMs (Gasparrini et al. 2010) are the standard framework for capturing these dynamics, simultaneously modelling two dimensions of risk:\n\n\n\nExposure-response: how risk changes across exposure levels\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nLag-response: how risk evolves over time after exposure (lags)\n\n\n\n\nUsually splines (natural cubic, B-splines or P-splines) are used to define these usually non-linear relationships in each dimension."
+    "text": "Distributed Lag Non-Linear Models (DLNMs)\nDLNMs (Gasparrini et al. 2010) are the standard framework for capturing these dynamics, simultaneously modelling two dimensions of risk:\n\n\n\nExposure-response: how risk changes across exposure levels\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nLag-response: how risk evolves over time after exposure (lags)\n\n\n\n\nUsually splines (natural cubic, B-splines or P-splines) are used to define these usually non-linear relationships in each dimension"
   },
   {
     "objectID": "index.html#distributed-lag-non-linear-models-dlnms-1",
@@ -193,7 +193,7 @@
     "href": "index.html#temperature-mortality-study",
     "title": "A Bayesian framework for distributed lag non-linear models: the {bdlnm} R package",
     "section": "Temperature-mortality study",
-    "text": "Temperature-mortality study\n\nWe assess the immediate and delayed non-linear effect of daily mean temperature on mortality (age 75+) in London, 2000–2011\nWe will use the {bdlnm} built-in london dataset: one observation per day, containing mortality counts, mean temperature, and calendar variables:\n\n\n\n\n\n\n\n\n\ndate\nyear\ndow\ntmean\nmort_00_74\nmort_75plus\nmort\n\n\n\n\n2000-01-01\n2000\nSat\n7.642016\n101\n226\n327\n\n\n2000-01-02\n2000\nSun\n8.351041\n100\n191\n291\n\n\n2000-01-03\n2000\nMon\n8.188446\n107\n205\n312\n\n\n2000-01-04\n2000\nTue\n6.320066\n97\n191\n288\n\n\n2000-01-05\n2000\nWed\n6.550981\n92\n213\n305\n\n\n2000-01-06\n2000\nThu\n8.728774\n82\n213\n295\n\n\n\n\n\n\n\n(Vicedo-Cabrera et al. 2019)"
+    "text": "Temperature-mortality study\n\nWe assess the immediate and delayed non-linear effect of daily mean temperature on mortality (age 75+) in London, 2000-2011\nWe will use the {bdlnm} built-in london dataset: one observation per day, containing mortality counts, mean temperature, and calendar variables:\n\n\n\n\n\n\n\n\n\ndate\nyear\ndow\ntmean\nmort_00_74\nmort_75plus\nmort\n\n\n\n\n2000-01-01\n2000\nSat\n7.642016\n101\n226\n327\n\n\n2000-01-02\n2000\nSun\n8.351041\n100\n191\n291\n\n\n2000-01-03\n2000\nMon\n8.188446\n107\n205\n312\n\n\n2000-01-04\n2000\nTue\n6.320066\n97\n191\n288\n\n\n2000-01-05\n2000\nWed\n6.550981\n92\n213\n305\n\n\n2000-01-06\n2000\nThu\n8.728774\n82\n213\n295\n\n\n\n\n\n\n\n(Vicedo-Cabrera et al. 2019)"
   },
   {
     "objectID": "index.html#model-specification",
@@ -221,7 +221,7 @@
     "href": "index.html#fitting-the-bayesian-dlnm-1",
     "title": "A Bayesian framework for distributed lag non-linear models: the {bdlnm} R package",
     "section": "Fitting the Bayesian DLNM",
-    "text": "Fitting the Bayesian DLNM\nNow we have a matrix with the estimated posterior samples of the model coefficients, together with their summary across samples:\nPosterior samples mod$coefficients\n\n\n                 sample1      sample2      sample3      sample4      sample5\n(Intercept)  5.177126982  5.078820055  5.087683978  5.240468411  5.259946480\ncbv1.l1     -0.139254820 -0.154092463 -0.112435103 -0.110085718 -0.153345807\ncbv1.l2     -0.007785162  0.008057831  0.001246025 -0.003957057  0.006234502\ncbv1.l3     -0.057349056 -0.056023923 -0.045405679 -0.044017955 -0.055955602\ncbv1.l4      0.048904544  0.057243423  0.025429829  0.028536089  0.049960368\n\n\nPosterior summary mod$coefficients.summary\n\n\n                    mean         sd  0.025quant     0.5quant  0.975quant\n(Intercept)  5.204972340 0.10244169  5.00329053  5.205428027  5.39781786\ncbv1.l1     -0.134951449 0.02148864 -0.17689662 -0.134049849 -0.09601856\ncbv1.l2     -0.006084204 0.01031606 -0.02556688 -0.006093614  0.01455691\ncbv1.l3     -0.049708682 0.01141099 -0.07279473 -0.049392945 -0.02789958\ncbv1.l4      0.049567985 0.01806032  0.01484373  0.050353168  0.08412770\n\n\n* Visualizing only the first 5 coefficients and the first 5 posterior samples"
+    "text": "Fitting the Bayesian DLNM\nNow we have a matrix with the estimated posterior samples of the model coefficients, together with their summary across samples:\nPosterior samples mod$coefficients\n\n\n                 sample1      sample2      sample3      sample4      sample5\n(Intercept)  5.177126983  5.078820057  5.087683979  5.240468410  5.259946480\ncbv1.l1     -0.139254820 -0.154092463 -0.112435103 -0.110085718 -0.153345807\ncbv1.l2     -0.007785162  0.008057831  0.001246025 -0.003957057  0.006234502\ncbv1.l3     -0.057349056 -0.056023923 -0.045405679 -0.044017954 -0.055955602\ncbv1.l4      0.048904544  0.057243423  0.025429828  0.028536089  0.049960368\n\n\nPosterior summary mod$coefficients.summary\n\n\n                    mean         sd  0.025quant     0.5quant  0.975quant\n(Intercept)  5.204972340 0.10244169  5.00329053  5.205428026  5.39781786\ncbv1.l1     -0.134951449 0.02148864 -0.17689662 -0.134049849 -0.09601856\ncbv1.l2     -0.006084204 0.01031606 -0.02556688 -0.006093614  0.01455691\ncbv1.l3     -0.049708682 0.01141099 -0.07279473 -0.049392945 -0.02789958\ncbv1.l4      0.049567985 0.01806032  0.01484373  0.050353168  0.08412770\n\n\n* Visualizing only the first 5 coefficients and the first 5 posterior samples"
   },
   {
     "objectID": "index.html#minimum-mortality-temperature-mmt",
@@ -284,7 +284,7 @@
     "href": "index.html#attributable-burden",
     "title": "A Bayesian framework for distributed lag non-linear models: the {bdlnm} R package",
     "section": "Attributable burden",
-    "text": "Attributable burden\n\nThe attributable() function estimates the mortality burden that can be attributed to non-optimal temperature exposures:\n\nAttributable fraction (AF): proportion of all attributable mortality events\nAttributable number (AN): absolute number of attributable deaths\n\nIn general, if we have estimated \\(\\beta_x\\) associated with a certain exposure, we can calculate its corresponding attribution as:\n\n\\[\\text{AF}_{x,t} = 1 - \\exp(-\\beta_x) \\qquad \\text{AN}_{x,t} = n_t \\cdot \\text{AF}_{x,t}\\]\n\nIt’s important to center effects to the optimal temperature if we want to calculate the attribution to non-optimal ones\nIn a DLNM setting, the overall cumulative effect \\(\\beta_{x,\\,\\text{overall}}\\) can be used as \\(\\beta_x\\) (forward perspective)"
+    "text": "Attributable burden\n\nThe attributable() function estimates the mortality burden that can be attributed to non-optimal temperature exposures:\n\nAttributable fraction (AF): proportion of all attributable mortality events\nAttributable number (AN): absolute number of attributable deaths\n\nIn general, if we have estimated \\(\\beta_x\\) associated with a certain exposure, we can calculate its corresponding attribution as:\n\n\\[\\text{AF}_{x,t} = 1 - \\exp(-\\beta_x) \\qquad \\text{AN}_{x,t} = n_t \\cdot \\text{AF}_{x,t}\\]\n\nIn a DLNM setting, the overall cumulative effect \\(\\beta_{x,\\,\\text{overall}}\\) can be used as \\(\\beta_x\\) (forward perspective)\n\n\n\n\nIt’s important to center effects to the optimal temperature if we want to calculate the attribution to non-optimal temperatures"
   },
   {
     "objectID": "index.html#computing-attributable-burden",
@@ -298,7 +298,7 @@
     "href": "index.html#daily-attributable-fraction",
     "title": "A Bayesian framework for distributed lag non-linear models: the {bdlnm} R package",
     "section": "Daily attributable fraction",
-    "text": "Daily attributable fraction\nTime series of daily attributable fractions (AFs), together with the temperature exposition in that given day:"
+    "text": "Daily attributable fraction\nTime series of daily attributable fractions (AF), together with the temperature exposition in that given day:"
   },
   {
     "objectID": "index.html#total-attributable-burden",
@@ -319,7 +319,7 @@
     "href": "index.html#present-and-future-work",
     "title": "A Bayesian framework for distributed lag non-linear models: the {bdlnm} R package",
     "section": "Present and future work",
-    "text": "Present and future work\nComing soon:\n\nMulti-location analysis: model different exposure-lag-response curves across cities or regions within a single model (e.g., SB-DLNM)\nParallelization: faster inference via {futurize} for large datasets\nCompatibility beyond INLA: use MCMC algorithm (e.g. NIMBLE, Stan) for Bayesian model estimation"
+    "text": "Present and future work\nComing soon:\n\nMulti-location analysis: model different exposure-lag-response associations across cities or regions within a single model (e.g., SB-DLNM)\nParallelization: faster inference via {futurize} for large datasets\nCompatibility beyond INLA: use MCMC algorithms (e.g. NIMBLE, Stan) for Bayesian inference"
   },
   {
     "objectID": "index.html#further-resources",
