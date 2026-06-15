@@ -378,6 +378,7 @@ temp <- round(seq(min(london$tmean), max(london$tmean), by = 0.1), 1)
 ## Fitting the Bayesian DLNM
 
 ```{r echo = TRUE}
+library(bdlnm)
 mod <- bdlnm(
   mort_75plus ~ cb + factor(dow) + seas,
   data = london,
@@ -510,7 +511,7 @@ The posterior is concentrated around 18.9°C and unimodal: the median is a stabl
 
 ## Predicting exposure-lag-response effects
 
-From the fitted model, `bcrosspred()` computes the full bivariate exposure-lag-response association. Relative risks will be centered at the MMT:
+From the fitted model, `bcrosspred()` predicts the full bivariate exposure-lag-response association. Relative risks will be centered at the MMT:
 
 ```{r echo = TRUE}
 cen <- mmt$summary[["0.5quant"]]
@@ -587,7 +588,7 @@ p <- persp(x = cpred$exp_at,
             phi = 30,
             xlab = "Exposure",
             ylab = "Lag",
-            zlab = "Outcome",
+            zlab = "RR",
             col = "lightskyblue",
             zlim = c(min(matfitmed, na.rm = TRUE), max(matfitmed, na.rm = TRUE)),
             ltheta = 290,
@@ -631,7 +632,7 @@ p <- persp(x = cpred$exp_at,
            phi = 30,
            xlab = "Exposure",
            ylab = "Lag",
-           zlab = "Outcome",
+           zlab = "RR",
            col = "lightskyblue",
            zlim = c(min(matfitmed, na.rm = TRUE), max(matfitmed, na.rm = TRUE)),
            ltheta = 290,
@@ -679,7 +680,7 @@ p <- persp(x = cpred$exp_at,
            phi = 30,
            xlab = "Exposure",
            ylab = "Lag",
-           zlab = "Outcome",
+           zlab = "RR",
            col = "lightskyblue",
            zlim = c(min(matfitmed, na.rm = TRUE), max(matfitmed, na.rm = TRUE)),
            ltheta = 290,
@@ -695,16 +696,18 @@ plot(cpred, ptype = "overall", log = "y", main = "Overall cumulative effect")
 
 ## Attributable burden
 
-- The `attributable()` function estimates the mortality burden attributable to non-optimal temperature exposures:
+- The `attributable()` function estimates the mortality burden that can be attributed to non-optimal temperature exposures:
 
-  - **Attributable fraction (AF):** proportion of all mortality events attributable to temperature
-  - **Attributable number (AN):** absolute number of deaths attributable to temperature
+  - **Attributable fraction (AF):** proportion of all attributable mortality events
+  - **Attributable number (AN):** absolute number of attributable deaths
 
-- If we have estimated $\beta_x$ associated with a certain exposure (**centered to an optimal reference one**) we can calculate the attribution to non-optimal temperature exposure as:
+- If we have estimated $\beta_x$ associated with a certain exposure, we can calculate its corresponding attribution as:
 
 $$\text{AF}_{x,t} = 1 - \exp(-\beta_x) \qquad \text{AN}_{x,t} = n_t \cdot \text{AF}_{x,t}$$
 
-- In a DLNM setting, the **overall cumulative effect** $\beta_{x,\,\text{overall}}$ can be used as $\beta_x$ (forward perspective)
+- It's important to center effects to the optimal temperature if we want to calculate the attribution to non-optimal ones
+
+- In a DLNM setting, the overall cumulative effect $\beta_{x,\,\text{overall}}$ can be used as $\beta_x$ (forward perspective)
 
 ## Computing attributable burden
 
@@ -825,11 +828,14 @@ Total mortality burden attributable to non-optimal temperatures in the London 75
 
 ```{r}
 rbind(
-  "Attributable fraction" = attr$aftotal.summary,
-  "Attributable number" = attr$antotal.summary
+  "Attributable fraction" = paste0(round(attr$aftotal.summary[c("0.5quant", "0.025quant", "0.975quant")]*100, 2), "%"),
+  "Attributable number" = format(
+    round(attr$antotal.summary[c("0.5quant", "0.025quant", "0.975quant")], 0),
+    big.mark = ",",
+    scientific = FALSE
+  )
 ) |>
   as.data.frame() |>
-  round(3) |>
   gt(rownames_to_stub = TRUE) |>
   gt::tab_style(
     style = list(
@@ -865,7 +871,7 @@ Be cautious about the interpretation of these results as we estimate an associat
 
 - Posterior summaries are fully compatible with frequentist workflows, making adoption straightforward for practitioners familiar with {dlnm}
 
-- {bdlnm} constitutes a valuable tool for environmental risk research and, more generally, for any time series analysis with delayed non-linear effects
+- {bdlnm} constitutes a valuable tool for environmental risk research and, more generally, for any time series analysis with delayed effects
 
 ## Present and future work
 
