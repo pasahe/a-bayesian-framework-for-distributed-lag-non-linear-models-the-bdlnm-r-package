@@ -3,7 +3,7 @@ title: "A Bayesian framework for distributed lag non-linear models: the {bdlnm} 
 author: 
  - name: "**Pau<br>Satorra**"
    affiliations: 
-    - name: "Biostatistics Support and Research Unit, IGTP" 
+    - name: "Germans Trias i Pujol Research Institute and Hospital (IGTP), Barcelona" 
  - name: "**Marcos Quijal-Zamorano**"
    affiliations: 
     - name: "Institute of Social and Preventive Medicine (ISPM), University of Bern" 
@@ -567,7 +567,7 @@ plot(cpred, ptype = "3d")
 #| fig-height: 5
 #| out-width: "100%"
 par(mar = c(4, 4, 3, 1))
-plot(cpred, ptype = "3d", main = "Exposure-lag-response surface")
+plot(cpred, ptype = "3d", main = "Exposure-lag-response surface", zlab = "RR")
 ```
 
 ## `plot.bcrosspred()`: visualise predictions {auto-animate="true"}
@@ -828,8 +828,8 @@ Total mortality burden attributable to non-optimal temperatures in the London 75
 
 ```{r}
 rbind(
-  "Attributable fraction" = paste0(round(attr$aftotal.summary[c("0.5quant", "0.025quant", "0.975quant")]*100, 2), "%"),
-  "Attributable number" = format(
+  "Total Attributable Fraction" = paste0(round(attr$aftotal.summary[c("0.5quant", "0.025quant", "0.975quant")]*100, 2), "%"),
+  "Total Attributable Number" = format(
     round(attr$antotal.summary[c("0.5quant", "0.025quant", "0.975quant")], 0),
     big.mark = ",",
     scientific = FALSE
@@ -923,7 +923,7 @@ Be cautious about the interpretation of these results as we estimate an associat
 
 <center>
 
-![](WWW/logo.png){width="30%"}
+![](WWW/qr_code.png){width="30%"}
 
 `r fontawesome::fa("globe")` <a href="https://pasahe.github.io/bdlnm/" style = "color: #6C878F; font-weight: bold;">pasahe.github.io/bdlnm</a>
 
