@@ -549,7 +549,7 @@ cpred$matRRfit[1:4, 1:4, 1:1, drop = FALSE]
 **Posterior summary** `cpred$matRRfit.summary` 
 
 ```{r}
-cpred$matRRfit.summary[1:4, 1:4, 1, drop = FALSE]
+cpred$matRRfit.summary[1:4, 1:4, 4, drop = FALSE]
 ```
 
 <span style="font-size:0.8em;"><em> *Visualizing only first 4 temperatures and lags and 1 summary statistic </em></span>
@@ -701,7 +701,7 @@ plot(cpred, ptype = "overall", log = "y", main = "Overall cumulative effect")
   - **Attributable fraction (AF):** proportion of all attributable mortality events
   - **Attributable number (AN):** absolute number of attributable deaths
 
-- If we have estimated $\beta_x$ associated with a certain exposure, we can calculate its corresponding attribution as:
+- In general, if we have estimated $\beta_x$ associated with a certain exposure, we can calculate its corresponding attribution as:
 
 $$\text{AF}_{x,t} = 1 - \exp(-\beta_x) \qquad \text{AN}_{x,t} = n_t \cdot \text{AF}_{x,t}$$
 
@@ -711,7 +711,7 @@ $$\text{AF}_{x,t} = 1 - \exp(-\beta_x) \qquad \text{AN}_{x,t} = n_t \cdot \text{
 
 ## Computing attributable burden
 
-`attributable()` returns daily and aggregated AF and AN using either the forward or backward perspective:
+`attributable()` returns daily and aggregated AF and AN:
 
 ```{r echo = TRUE}
 attr <- attributable(mod, london, name_date = "date", name_exposure = "tmean", name_cases = "mort_75plus", cen = cen, dir = "forw")
