@@ -69,11 +69,11 @@ library(tictoc)
 
 - Climate change is intensifying extreme environmental conditions: heatwaves, cold spells are becoming more frequent and severe
 
-- Environmental exposures rarely act instantaneously, as their health impact unfolds over time:
+- Environmental exposures rarely act instantaneously, as their health impact unfolds over a short period of time:
 
-  - A heatwave today may elevate mortality risk several days later
+  - A heatwave today may elevate mortality risk days later
 
-  - Cold temperatures can trigger cardiovascular events long after exposure
+  - Cold temperatures can trigger cardiovascular events time after exposure
 
   - Air pollution accumulates biological damage across days or weeks
 
@@ -81,7 +81,7 @@ library(tictoc)
 
 ## Distributed Lag Non-Linear Models (DLNMs)
 
-DLNMs [@gasparrini] are the standard framework for capturing these dynamics, simultaneously modelling two dimensions of risk:
+DLNMs [@gasparrini] are the standard framework for capturing these short-term dynamics, simultaneously modelling two dimensions of risk:
 
 :::: {.columns}
 
@@ -239,7 +239,7 @@ This enables:
 
 - **Full uncertainty quantification** of all estimates via posterior distributions
 
-- **Uncertainty propagation** in derived measures (optimal exposure, attributable burden) without additional approximations
+- **Uncertainty propagation** in derived measures (optimal exposure, attributable burden, hypothesis testing) without additional approximations
 
 - **Hierarchical extensions** to add layers of complexity in the model (e.g. Spatial Bayesian DLNMs, @SBDLNM)
 
