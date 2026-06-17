@@ -421,7 +421,7 @@ mod$coefficients.summary[1:5, -6]
 ## Minimum mortality temperature (MMT)
 
 ::: {.callout-note appearance="minimal"}
-The **minimum mortality temperature (MMT)** is the temperature at which the overall cumulative mortality risk is minimised. It is used as the reference value to center relative risk estimates, so that all effects are interpreted relative to the temperature associated with lowest mortality
+The **minimum mortality temperature (MMT)** is the temperature at which the overall cumulative mortality risk is minimised. It is used as the reference value to center relative risk estimates, so that all effects are interpreted relative to the temperature associated with lowest mortality risk
 :::
 
 ```{r}
